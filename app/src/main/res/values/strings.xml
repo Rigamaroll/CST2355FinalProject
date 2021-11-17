@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CST2355FinalProject</string>
+    <string name="title">Welcome to NASA Daily Image Viewer</string>
 </resources>

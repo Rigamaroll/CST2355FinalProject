@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CST2355FinalProject">
         <activity
+            android:name=".ViewAllImage"
+            android:exported="false" />
+        <activity
+            android:name=".SearchImage"
+            android:exported="false" />
+        <activity
+            android:name=".DownloadViewImage"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
