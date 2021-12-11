@@ -20,14 +20,15 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences saveLogin = null;
     SharedPreferences passFile = null;
     private LoginCredentials login;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if ((getSharedPreferences("login",Context.MODE_PRIVATE).getString("loginEmail","").contentEquals(""))) {
+        if ((getSharedPreferences("login", Context.MODE_PRIVATE).getString("loginEmail", "").contentEquals(""))) {
             Toast newUser = Toast.makeText(this, "You haven't used the app yet.  " +
-                    "Entering your email and password will setup the app with your personal information",Toast.LENGTH_LONG);
+                    "Entering your email and password will setup the app with your personal information", Toast.LENGTH_LONG);
             newUser.show();
         }
 
@@ -40,35 +41,48 @@ public class MainActivity extends AppCompatActivity {
         EditText inputPass = findViewById(R.id.enterPassword);
         inputPass.setText(login.getPass());
 
-        Intent dashboard = new Intent(this, Dashboard.class);
         final Button loginButton = findViewById(R.id.loginButton);
         loginButton.setOnClickListener((click) -> {
 
-            if (passFile.getString("password","").contentEquals("")) {
-
-                setNewPassword(inputPass.getText().toString());
-                login.setEmail(inputEmail.getText().toString());
-                login.setPass(inputPass.getText().toString());
-                saveSharedPrefs(login);
-                startActivity(dashboard);
-
-            } else if (!inputPass.getText().toString().contentEquals(passFile.getString("password", ""))) {
-
-                Toast wrongPass = Toast.makeText(this, "Your password is incorrect.  Please try again!",Toast.LENGTH_LONG);
-                wrongPass.show();
-
-            } else {
-                login.setEmail(inputEmail.getText().toString());
-                login.setPass(inputPass.getText().toString());
-                saveSharedPrefs(login);
-                startActivity(dashboard);
-
-            }
+            authenticate(inputEmail, inputPass);
 
         });
 
     }
-    //this method saves the information to the SharedPreferences file
+
+    /**
+     * Authenticate will take the login information and test the password then
+     * set the login Object.
+     * @param email
+     * @param pass
+     */
+
+    private void authenticate(EditText email, EditText pass) {
+        Intent dashboard = new Intent(this, Dashboard.class);
+        if (passFile.getString("password", "").contentEquals("")) {
+
+            setNewPassword(pass);
+            setPrefs(email, pass);
+            startActivity(dashboard);
+
+        } else if (!pass.getText().toString().contentEquals(passFile.getString("password", ""))) {
+
+            Toast wrongPass = Toast.makeText(this, "Your password is incorrect.  Please try again!", Toast.LENGTH_LONG);
+            wrongPass.show();
+
+        } else {
+            setPrefs(email, pass);
+            startActivity(dashboard);
+
+        }
+    }
+
+    /**
+     * this method saves the SharedPrefs to the phone.  It takes a LoginCredentials
+     * object and determines if the password is to be saved or not.
+     *
+     * @param log
+     */
 
     private void saveSharedPrefs(LoginCredentials log) {
         CheckBox savePass = findViewById(R.id.passwordCheckbox);
@@ -89,16 +103,36 @@ public class MainActivity extends AppCompatActivity {
         edit.commit();
     }
 
-    private void setNewPassword (String newPass) {
+    /**
+     * takes two EditTexts for the email and password and sets the
+     * LoginCredentials object, then saves the SharedPrefs.
+     *
+     * @param email
+     * @param pass
+     */
+    private void setPrefs(EditText email, EditText pass) {
+
+        login.setEmail(email.getText().toString());
+        login.setPass(pass.getText().toString());
+        saveSharedPrefs(login);
+
+    }
+
+    /**
+     * this method creates the sharedPref with the new password in it
+     *
+     * @param newPass
+     */
+    private void setNewPassword(EditText newPass) {
 
         SharedPreferences.Editor edit = passFile.edit();
-        edit.putString("password", newPass);
+        edit.putString("password", newPass.getText().toString());
         edit.commit();
     }
 
     /**
-     *    this method gets the sharedPreference data from the file and
-     *    creates a new LoginCredentials Object.
+     * this method gets the sharedPreference data from the file and
+     * creates a new LoginCredentials Object.
      */
 
     private void loadSharedPrefs() {
@@ -113,8 +147,8 @@ public class MainActivity extends AppCompatActivity {
 
     private class LoginCredentials {
 
-        protected String email;
-        protected String pass;
+        private String email;
+        private String pass;
 
         protected LoginCredentials(String email) {
 
