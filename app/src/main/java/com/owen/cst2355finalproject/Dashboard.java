@@ -18,15 +18,6 @@ public class Dashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        Toolbar bar = findViewById(R.id.mainToolBar);
-        setSupportActionBar(bar);
-        DrawerLayout drawer = findViewById(R.id.navDrawer);
-        ActionBarDrawerToggle toggleDrawer = new ActionBarDrawerToggle(this, drawer, bar, R.string.open, R.string.close);
-        drawer.addDrawerListener(toggleDrawer);
-        toggleDrawer.syncState();
-        NavigationView navView = findViewById(R.id.navView);
-        navView.setNavigationItemSelectedListener(new MainToolBar());
-
         final Button toolbarButton = findViewById(R.id.goToMainToolbar);
         toolbarButton.setOnClickListener((click) -> {
 

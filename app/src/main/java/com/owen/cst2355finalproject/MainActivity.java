@@ -1,9 +1,6 @@
 package com.owen.cst2355finalproject;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +10,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
     SharedPreferences saveLogin = null;
@@ -26,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         if ((getSharedPreferences("login", Context.MODE_PRIVATE).getString("loginEmail", "").contentEquals(""))) {
             Toast newUser = Toast.makeText(this, "You haven't used the app yet.  " +
                     "Entering your email and password will setup the app with your personal information", Toast.LENGTH_LONG);
@@ -35,11 +31,15 @@ public class MainActivity extends AppCompatActivity {
         saveLogin = getSharedPreferences("login", Context.MODE_PRIVATE);
         passFile = getSharedPreferences("passFile", Context.MODE_PRIVATE);
         loadSharedPrefs();
-
         EditText inputEmail = findViewById(R.id.enterEmail);
-        inputEmail.setText(login.getEmail());
         EditText inputPass = findViewById(R.id.enterPassword);
-        inputPass.setText(login.getPass());
+
+        if (savedInstanceState == null) {
+
+            inputEmail.setText(login.getEmail());
+            inputPass.setText(login.getPass());
+
+        }
 
         final Button loginButton = findViewById(R.id.loginButton);
         loginButton.setOnClickListener((click) -> {
@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             setPrefs(email, pass);
             startActivity(dashboard);
-
         }
     }
 

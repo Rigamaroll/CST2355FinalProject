@@ -59,7 +59,7 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
                 break;
 
             case R.id.goSearchPage:
-                Intent goSearch = new Intent(getApplicationContext(), SearchImage.class);
+                Intent goSearch = new Intent(this, SearchImage.class);
                 startActivity(goSearch);
                 break;
 
@@ -70,7 +70,9 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
 
             case R.id.logout:
                 Intent logout = new Intent(this, MainActivity.class);
+                logout.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(logout);
+
                 break;
         }
 
