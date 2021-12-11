@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/item1"
+        android:title="Bread"
+        android:icon="@drawable/bread"
+        android:orderInCategory="25"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/item2"
+        android:title="Hamburger"
+        android:icon="@drawable/hamburger"
+        android:orderInCategory="50"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/item3"
+        android:title="Octopus"
+        android:icon="@drawable/octopus"
+        android:orderInCategory="75"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/item4"
+        android:title="Choice 4"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+
+</menu>

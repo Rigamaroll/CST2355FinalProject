@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainToolBar"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleTextColor="@color/white"
+        android:id="@+id/mainToolBar"/>
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/navDrawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:openDrawer="start">
+
+        <com.google.android.material.navigation.NavigationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:fitsSystemWindows="true"
+            app:itemBackground="@color/black"
+            app:headerLayout="@layout/drawer_header_layout"
+            app:itemTextColor="@color/white"
+            app:menu="@menu/nav_drawer_menu"
+            android:id="@+id/navView"/>
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+</merge>

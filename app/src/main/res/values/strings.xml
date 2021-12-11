@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">CST2355FinalProject</string>
-    <string name="title">Welcome to NASA Daily Image Viewer</string>
+    <string name="title">Welcome to NASA Daily Image Viewer\n</string>
+    <string name="imageListTitle">Images Downloaded</string>
+    <string name="goSearchPage">Search New Image</string>
+    <string name="goViewImagePage">See All Images</string>
+    <string name="goHome">Homepage</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="emailPrompt">Enter your email address:</string>
+    <string name="emailHint">Type email here</string>
+    <string name="passwordPrompt">Type your password:</string>
+    <string name="loginButton">LOGIN</string>
+    <string name="title_activity_navigation">Navigation</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
 </resources>

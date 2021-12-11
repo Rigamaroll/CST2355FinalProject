@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/goHome"
+        app:showAsAction="always"
+        android:orderInCategory="25"
+        android:title="@string/goHome"/>
+
+    <item
+        android:id="@+id/goSearchPage"
+        android:orderInCategory="50"
+        app:showAsAction="always"
+        android:title="@string/goSearchPage"/>
+
+    <item
+        android:id="@+id/goViewImagePage"
+        android:orderInCategory="75"
+        app:showAsAction="always"
+        android:title="@string/goViewImagePage"/>
+
+    <item
+        android:id="@+id/logout"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:title="Logout"/>
+
+</menu>
