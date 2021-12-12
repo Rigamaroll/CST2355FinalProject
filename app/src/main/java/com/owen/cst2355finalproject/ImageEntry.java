@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 
 public class ImageEntry implements Serializable {
@@ -11,11 +12,11 @@ public class ImageEntry implements Serializable {
     private long id;
     private final String title;
     private final URL url;
-    private final String date;
+    private final Calendar date;
     private final URL hdURL;
     private final Bitmap imageFile;
 
-    public ImageEntry(long id, String title, URL url, String date, URL hdURL, Bitmap imageFile) {
+    public ImageEntry(long id, String title, URL url, Calendar date, URL hdURL, Bitmap imageFile) {
 
         this.id = id;
         this.url = url;
@@ -38,7 +39,7 @@ public class ImageEntry implements Serializable {
         return url;
     }
 
-    public String getDate() {
+    public Calendar getDate() {
         return date;
     }
 

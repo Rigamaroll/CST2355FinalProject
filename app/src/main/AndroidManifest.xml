@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/nasaimagesearchicon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CST2355FinalProject.NoActionBar" >
+        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" >
 
         <activity
             android:name=".Dashboard"
@@ -21,9 +21,9 @@
         <activity
             android:name=".SearchImage"
             android:exported="false" />
-        <activity
+        <!--<activity
             android:name=".MainToolBar"
-            android:exported="false" />
+            android:exported="false" />-->
         <activity
             android:name=".MainActivity"
             android:exported="true" >

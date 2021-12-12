@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -13,10 +14,21 @@ import com.google.android.material.navigation.NavigationView;
 
 public class Dashboard extends AppCompatActivity {
 
+    private MainToolBar theBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        /*theBar = new MainToolBar(this, findViewById(R.id.mainToolBar), findViewById(R.id.navDrawer), findViewById((R.id.navView)));
+        setSupportActionBar(theBar.getTools());
+        theBar.getToggleDrawer().syncState();
+        theBar.getNavView().setNavigationItemSelectedListener(theBar);
+        theBar.getDrawer().addDrawerListener(theBar.getToggleDrawer());*/
+
+        /*NavigationView navView = findViewById(R.id.navView);
+        navView.setNavigationItemSelectedListener(theBar);*/
 
         final Button toolbarButton = findViewById(R.id.goToMainToolbar);
         toolbarButton.setOnClickListener((click) -> {

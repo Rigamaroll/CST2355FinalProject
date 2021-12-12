@@ -15,11 +15,11 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-    <style name="Theme.CST2355FinalProject.NoActionBar">
+    <!--<style name="Theme.CST2355FinalProject.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
     <style name="Theme.CST2355FinalProject.AppBarOverlay"
         parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="Theme.CST2355FinalProject.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.CST2355FinalProject.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />-->
 </resources>

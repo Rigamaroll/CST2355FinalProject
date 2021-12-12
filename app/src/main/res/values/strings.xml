@@ -14,5 +14,7 @@
     <string name="searchImageTitle">Search a New Image</string>
     <string name="datePick">Choose the Date</string>
     <string name="searchImageButton">Search Image</string>
+    <string name="saveImageButton">Save Image</string>
+    <string name="pickerTitle">Choose The Image Date</string>
 
 </resources>

@@ -8,8 +8,8 @@
 
     <DatePicker
         android:id="@+id/datePicker"
+        android:datePickerMode="spinner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/datePick" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>

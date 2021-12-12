@@ -4,28 +4,86 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchImage"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".SearchImage">
 
-   <!-- <include
-        android:id="@+id/navBar"
-        layout="@layout/activity_main_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />-->
+    <!-- <include
+         android:id="@+id/navBar"
+         layout="@layout/activity_main_toolbar"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content" />-->
 
     <TextView
         android:id="@+id/searchImageTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
-        android:text="@string/searchImageTitle"/>
+        android:text="@string/searchImageTitle"
+        android:textSize="30dp" />
 
-    <Button
-        android:id="@+id/searchImageButton"
+    <ImageView
+        android:id="@+id/newImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/imageName"
+        android:textSize="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/light_grey"
-        android:textColor="@color/black"
-        android:text="@string/searchImageButton"/>
+        android:text="Image: "
+        />
 
+    <TextView
+        android:id="@+id/imageDate"
+        android:textSize="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date: "
+        />
+
+    <TextView
+        android:id="@+id/imageURL"
+        android:textSize="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="URL: "
+        />
+
+    <TextView
+        android:id="@+id/imageHdURL"
+        android:textSize="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HD URL: "
+        />
+
+    <ProgressBar
+        android:id="@+id/downloadProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/searchImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_grey"
+            android:text="@string/searchImageButton"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/saveImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_grey"
+            android:text="@string/saveImageButton"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
 </LinearLayout>
