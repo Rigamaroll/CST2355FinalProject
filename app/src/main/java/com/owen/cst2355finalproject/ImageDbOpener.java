@@ -11,10 +11,10 @@ public class ImageDbOpener extends SQLiteOpenHelper {
     protected final static String DATABASE_NAME = "ImageDB";
     protected final static int VERSION_NUM = 1;
     public final static String TABLE_NAME = "Image";
-    public final static String COL_IMAGE = "Image";
-    public final static String COL_DATE = "Date";
+    public final static String COL_IMAGEENTRY_OBJECT = "ImageEntry";
+   /* public final static String COL_DATE = "Date";
     public final static String COL_URL = "URL";
-    public final static String COL_HD_URL = "HDUrl";
+    public final static String COL_HD_URL = "HDUrl";*/
     public final static String COL_ID = "_id";
 
 
@@ -35,10 +35,10 @@ public class ImageDbOpener extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase imageDB) {
 
         imageDB.execSQL("CREATE TABLE " + TABLE_NAME + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COL_DATE + " TEXT,"
-                + COL_URL + " TEXT,"
+                + COL_IMAGEENTRY_OBJECT + " BLOB);");
+                /*+ COL_URL + " TEXT,"
                 + COL_HD_URL + " TEXT,"
-                + COL_IMAGE + " BLOB);");
+                + COL_IMAGE + " BLOB);");*/
 
     }
 

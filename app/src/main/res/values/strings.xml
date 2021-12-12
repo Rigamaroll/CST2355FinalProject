@@ -11,8 +11,8 @@
     <string name="emailHint">Type email here</string>
     <string name="passwordPrompt">Type your password:</string>
     <string name="loginButton">LOGIN</string>
-    <string name="title_activity_navigation">Navigation</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="searchImageTitle">Search a New Image</string>
+    <string name="datePick">Choose the Date</string>
+    <string name="searchImageButton">Search Image</string>
 
 </resources>

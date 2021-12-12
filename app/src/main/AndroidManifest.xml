@@ -22,9 +22,6 @@
             android:name=".SearchImage"
             android:exported="false" />
         <activity
-            android:name=".DownloadViewImage"
-            android:exported="false" />
-        <activity
             android:name=".MainToolBar"
             android:exported="false" />
         <activity
