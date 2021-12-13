@@ -29,7 +29,7 @@ public class ImageEntry implements Serializable {
         this.explanation = explanation;
         this.title = title;
         try {
-            setSerializedImage(imageFile);
+            setImageFile(imageFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,12 +72,12 @@ public class ImageEntry implements Serializable {
         return imageBits;
     }
 
-    public void setSerializedImage(Bitmap serialize) throws IOException {
+    public void setImageFile(Bitmap serialize) throws IOException {
 
         byte[] converted= null;
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         ObjectOutputStream objOut = new ObjectOutputStream(bytes);
-        serialize.compress(Bitmap.CompressFormat.PNG, 80, objOut);
+        serialize.compress(Bitmap.CompressFormat.JPEG, 70, objOut);
         converted = bytes.toByteArray();
 
         objOut.flush();
@@ -86,7 +86,6 @@ public class ImageEntry implements Serializable {
         bytes.close();
 
         this.imageFile = converted;
-        System.out.println(this.imageFile);
     }
 
 }

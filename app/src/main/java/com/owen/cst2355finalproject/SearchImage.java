@@ -62,6 +62,7 @@ public class SearchImage extends AppCompatActivity {
         searchDate.setOnClickListener((click) -> {
 
             datePicker.show();
+            saveImage.setVisibility(View.INVISIBLE);
 
         });
 
@@ -113,11 +114,13 @@ public class SearchImage extends AppCompatActivity {
         long id = 0;
 
         ContentValues newRow = new ContentValues();
-        Cursor results = imageDB.rawQuery("SELECT COUNT(*) FROM " + ImageDbOpener.TABLE_NAME + ";", null, null);
+        Cursor results = imageDB.rawQuery("SELECT MAX(" + ImageDbOpener.COL_ID + ") FROM " + ImageDbOpener.TABLE_NAME + ";", null, null);
         while (results.moveToNext()) {
 
             id = results.getLong(0) + 1;
         }
+
+        results.close();
 
         ImageEntry imageEntry = new ImageEntry(id, title, url, date, hdUrl, explanation, newImage);
         ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
@@ -125,6 +128,7 @@ public class SearchImage extends AppCompatActivity {
         try {
             ObjectOutputStream objOut = new ObjectOutputStream(bytesOut);
             objOut.writeObject(imageEntry);
+            objOut.flush();
             objOut.close();
             bytes = bytesOut.toByteArray();
             bytesOut.flush();
@@ -223,6 +227,8 @@ public class SearchImage extends AppCompatActivity {
             if (this.hdUrl != null) {
                 imageTitle.setText(this.title);
                 imageHDUrl.setText(this.hdUrl);
+                Button save = findViewById(R.id.saveImageButton);
+                save.setVisibility(View.VISIBLE);
                 searchTitle.setText(R.string.searchImageResult);
             } else {
                 imageTitle.setText(this.title);

@@ -1,18 +1,25 @@
 <resources>
+    <!-- Page and App Titles -->
+
     <string name="app_name">CST2355FinalProject</string>
     <string name="title">Welcome to NASA Daily Image Viewer\n</string>
-    <string name="imageListTitle">Images Downloaded</string>
-    <string name="goSearchPage">Search New Image</string>
-    <string name="goViewImagePage">See All Images</string>
-    <string name="goHome">Homepage</string>
-    <string name="open">Open</string>
-    <string name="close">Close</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
+    <string name="imageListTitle">Images Downloaded\n</string>
+
+    <!--Login Page -->
+
     <string name="emailPrompt">Enter your email address:</string>
     <string name="emailHint">Type email here</string>
     <string name="passwordPrompt">Type your password:</string>
     <string name="loginButton">LOGIN</string>
+
+    <!--DashBoard Page -->
+
+    <string name="goSearchPage">Search New Image</string>
+    <string name="goViewImagePage">See All Images</string>
+    <string name="goHome">Homepage</string>
+
+    <!--SearchImage Page -->
+
     <string name="searchImageTitle">Search a New Image</string>
     <string name="datePick">Choose the Date</string>
     <string name="searchImageButton">Search Image</string>
@@ -22,5 +29,25 @@
     <string name="searchVideoResult">Your Video Result</string>
     <string name="dateOutRange">Your Date is In Future</string>
     <string name="dateRangePickNewDate">Please pick a new date.</string>
+
+    <!--Image Fragment -->
+
+    <string name="imageDate">Date:</string>
+    <string name="imageTitle"></string>
+    <string name="imageExplanation">Explanation:</string>
+    <string name="imageURL">URL:</string>
+    <string name="imageHdURL">HD URL:</string>
+    <string name="hideButton">HIDE</string>
+
+    <!-- Navigation -->
+
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+    <!-- MultiUse -->
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
 
 </resources>

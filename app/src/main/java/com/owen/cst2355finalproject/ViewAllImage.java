@@ -38,35 +38,44 @@ public class ViewAllImage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_image);
 
-        Button searchImage = findViewById(R.id.goToSearchImage);
+       /* Button searchImage = findViewById(R.id.goToSearchImage);
             searchImage.setOnClickListener((click) ->{
 
                 Intent goSearchPage = new Intent(this, SearchImage.class);
 
-            });
+            });*/
         ListView imageList = findViewById(R.id.imageList);
         imageList.setAdapter(imageAdapter = new ImageListAdapter());
         loadFromDB();
+        boolean isTablet = findViewById(R.id.fragmentFrame) != null;
 
         imageList.setOnItemClickListener((p, b, pos, id) -> {
 
-            /*if (isTablet) {
+            if (isTablet) {
 
-                DetailsFragment messageFrag = new DetailsFragment();
-                messageFrag.setArguments(getFragData(pos, id));
+                ImageFragment imageFrag = new ImageFragment();
+                imageFrag.setArguments(getFragData(pos));
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.fragmentFrame, messageFrag)
+                        .replace(R.id.fragmentFrame, imageFrag)
                         .addToBackStack(null)
                         .commit();
 
             } else {
 
-                Intent seeImageInfo = new Intent(ChatRoomActivity.this, EmptyActivity.class);
-                seeImageInfo.putExtras(getFragData(pos, id));
+                Intent seeImageInfo = new Intent(ViewAllImage.this, EmptyForFragment.class);
+                seeImageInfo.putExtras(getFragData(pos));
+                System.out.println("got to just before start activity");
                 startActivity(seeImageInfo);
-            }*/
+            }
         });
+    }
+
+    private Bundle getFragData(int pos) {
+
+        Bundle fragData = new Bundle();
+        fragData.putSerializable("imageEntry", storedImageList.get(pos));
+        return fragData;
     }
 
     /*
@@ -98,8 +107,6 @@ public class ViewAllImage extends AppCompatActivity {
 
             LayoutInflater inflater = getLayoutInflater();
             ImageEntry imagefile = storedImageList.get(position);
-            System.out.println (imagefile.toString());
-            System.out.println("got to getView");
 
             // Depending if the message is sent or received, load the correct template
             View view = inflater.inflate(R.layout.image_list, parent, false);
@@ -112,7 +119,6 @@ public class ViewAllImage extends AppCompatActivity {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-
 
             ((ImageView) view.findViewById(R.id.imageItem)).setImageBitmap(image);
             ((TextView) view.findViewById(R.id.imageTitle)).setText(imagefile.getTitle());
@@ -157,6 +163,7 @@ public class ViewAllImage extends AppCompatActivity {
             //add message to ArrayList
             storedImageList.add(newImageEntry);
         }
+        results.close();
     }
 
     public ImageEntry convertFromBlob(byte[] imageEntryObject) {

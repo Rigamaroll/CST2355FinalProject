@@ -11,7 +11,9 @@
         android:roundIcon="@drawable/nasaimagesearchicon"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" >
-
+        <activity
+            android:name=".EmptyForFragment"
+            android:exported="false" />
         <activity
             android:name=".Dashboard"
             android:exported="false" />
@@ -21,9 +23,11 @@
         <activity
             android:name=".SearchImage"
             android:exported="false" />
-        <!--<activity
+        <!--
+<activity
             android:name=".MainToolBar"
-            android:exported="false" />-->
+            android:exported="false" />
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="true" >
