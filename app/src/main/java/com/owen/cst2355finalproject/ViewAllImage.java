@@ -1,15 +1,21 @@
 package com.owen.cst2355finalproject;
 
+import static java.sql.DriverManager.getConnection;
+
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,6 +24,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import java.net.HttpURLConnection;
+import java.sql.SQLException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ViewAllImage extends AppCompatActivity {
@@ -30,6 +38,12 @@ public class ViewAllImage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_image);
 
+        Button searchImage = findViewById(R.id.goToSearchImage);
+            searchImage.setOnClickListener((click) ->{
+
+                Intent goSearchPage = new Intent(this, SearchImage.class);
+
+            });
         ListView imageList = findViewById(R.id.imageList);
         imageList.setAdapter(imageAdapter = new ImageListAdapter());
         loadFromDB();
@@ -84,11 +98,23 @@ public class ViewAllImage extends AppCompatActivity {
 
             LayoutInflater inflater = getLayoutInflater();
             ImageEntry imagefile = storedImageList.get(position);
+            System.out.println (imagefile.toString());
+            System.out.println("got to getView");
 
             // Depending if the message is sent or received, load the correct template
             View view = inflater.inflate(R.layout.image_list, parent, false);
 
-            ((ImageView) view.findViewById(R.id.imageItem)).setImageBitmap(imagefile.getImageFile());
+            Bitmap image = null;
+            try {
+                image = imagefile.getImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+
+            ((ImageView) view.findViewById(R.id.imageItem)).setImageBitmap(image);
             ((TextView) view.findViewById(R.id.imageTitle)).setText(imagefile.getTitle());
 
             return view;
@@ -137,8 +163,10 @@ public class ViewAllImage extends AppCompatActivity {
         ImageEntry newImageEntry = null;
         try {
             ByteArrayInputStream imageInput = new ByteArrayInputStream(imageEntryObject);
-            ObjectInputStream newImage   = new ObjectInputStream(imageInput);
+            ObjectInputStream newImage = new ObjectInputStream(imageInput);
             newImageEntry = (ImageEntry) newImage.readObject();
+            newImage.close();
+            imageInput.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

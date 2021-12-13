@@ -1,15 +1,23 @@
 package com.owen.cst2355finalproject;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,16 +26,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class SearchImage extends AppCompatActivity {
+
+    SQLiteDatabase imageDB;
+    DatePickerDialog datePicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,27 +55,90 @@ public class SearchImage extends AppCompatActivity {
 
         Button searchDate = findViewById(R.id.searchImageButton);
         Button saveImage = findViewById(R.id.saveImageButton);
-        ProgressBar imageProgress = findViewById(R.id.downloadProgress);
 
-        DatePickerDialog datePicker = getDatePickerDialog(new DatePickerListener());
+        datePicker = getDatePickerDialog(new DatePickerListener());
         datePicker.setTitle(R.string.pickerTitle);
-
 
         searchDate.setOnClickListener((click) -> {
 
             datePicker.show();
-            imageProgress.setVisibility(ProgressBar.VISIBLE);
 
         });
 
         saveImage.setOnClickListener((click) -> {
 
-
+            try {
+                addToDB();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
 
         });
     }
 
-    private DatePickerDialog getDatePickerDialog (DatePickerDialog.OnDateSetListener listen) {
+    private void alertDate() {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(R.string.dateOutRange)
+                .setMessage(R.string.dateRangePickNewDate)
+                .setPositiveButton(R.string.yes, (click, arg) -> {
+                    datePicker.show();
+                })
+                .setNegativeButton(R.string.no, (click, arg) -> {
+                })
+                .create()
+                .show();
+    }
+
+    private void addToDB() throws MalformedURLException {
+
+        ImageDbOpener dbOpener = new ImageDbOpener(this);
+        imageDB = dbOpener.getWritableDatabase();
+
+        TextView imageTitle = findViewById(R.id.searchImageName);
+        TextView imageDate = findViewById(R.id.searchImageDate);
+        TextView imageUrl = findViewById(R.id.searchImageURL);
+        TextView imageHDUrl = findViewById(R.id.searchImageHdURL);
+        TextView imageExplanation = findViewById(R.id.searchImageExplanation);
+        ImageView imageImage =findViewById(R.id.searchImageView);
+
+        String title = String.valueOf(imageTitle.getText());
+        String date = String.valueOf(imageDate.getText());
+        String url = String.valueOf(imageUrl.getText());
+        String hdUrl = String.valueOf(imageHDUrl.getText());
+        String explanation = String.valueOf(imageExplanation.getText());
+        BitmapDrawable theImage = (BitmapDrawable) imageImage.getDrawable();
+        Bitmap newImage = theImage.getBitmap();
+
+        long id = 0;
+
+        ContentValues newRow = new ContentValues();
+        Cursor results = imageDB.rawQuery("SELECT COUNT(*) FROM " + ImageDbOpener.TABLE_NAME + ";", null, null);
+        while (results.moveToNext()) {
+
+            id = results.getLong(0) + 1;
+        }
+
+        ImageEntry imageEntry = new ImageEntry(id, title, url, date, hdUrl, explanation, newImage);
+        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+        byte[] bytes = null;
+        try {
+            ObjectOutputStream objOut = new ObjectOutputStream(bytesOut);
+            objOut.writeObject(imageEntry);
+            objOut.close();
+            bytes = bytesOut.toByteArray();
+            bytesOut.flush();
+            bytesOut.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        newRow.put(ImageDbOpener.COL_IMAGEENTRY_OBJECT, bytes);
+        imageDB.insert(ImageDbOpener.TABLE_NAME, null, newRow);
+    }
+
+    private DatePickerDialog getDatePickerDialog(DatePickerDialog.OnDateSetListener listen) {
 
         Calendar cal = Calendar.getInstance();
         return new DatePickerDialog(this, listen, cal.get(Calendar.YEAR),
@@ -71,11 +153,16 @@ public class SearchImage extends AppCompatActivity {
 
             Calendar cal = Calendar.getInstance();
             cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-            DateFormat imageDate = new SimpleDateFormat("yyyy-MM-dd");
-            String newDate = imageDate.format(cal.getTime());
-            ImageQuery request = new ImageQuery();
-            request.execute("https://api.nasa.gov/planetary/apod?api_key=DgPLcIlnmN0Cwrzcg3e9NraFaYLIDI68Ysc6Zh3d&date=" + newDate);
+            if (cal.after(Calendar.getInstance())) {
 
+                alertDate();
+
+            } else {
+                DateFormat imageDate = new SimpleDateFormat("yyyy-MM-dd");
+                String newDate = imageDate.format(cal.getTime());
+                ImageQuery request = new ImageQuery();
+                request.execute("https://api.nasa.gov/planetary/apod?api_key=DgPLcIlnmN0Cwrzcg3e9NraFaYLIDI68Ysc6Zh3d&date=" + newDate);
+            }
         }
     }
 
@@ -85,6 +172,8 @@ public class SearchImage extends AppCompatActivity {
         String date;
         String url;
         String hdUrl;
+        String explanation;
+        Bitmap theImage;
 
         /*
          *gets a new HttpURLConnection
@@ -103,10 +192,8 @@ public class SearchImage extends AppCompatActivity {
         protected String doInBackground(String... args) {
 
             try {
-
-                getImageInfo(args[0]);
+                getImageData(getImageInfo(args[0]));
                 publishProgress(100);
-
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
             }
@@ -116,39 +203,63 @@ public class SearchImage extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Integer... values) {
 
-            ProgressBar progressBar = findViewById(R.id.progressWeather);
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.setProgress(values[0]);
+            ProgressBar imageProgress = findViewById(R.id.downloadProgress);
+            imageProgress.setVisibility(View.VISIBLE);
+            imageProgress.setProgress(values[0]);
             super.onProgressUpdate(values);
         }
 
         @Override
         protected void onPostExecute(String s) {
 
-            TextView imageTitle = findViewById(R.id.imageTitle);
-            TextView imageDate = findViewById(R.id.imageDate);
-            TextView imageUrl = findViewById(R.id.imageURL);
-            TextView imageHDUrl = findViewById(R.id.imageHdURL);
-            ImageView newImage = findViewById(R.id.newImageView);
+            TextView imageTitle = findViewById(R.id.searchImageName);
+            TextView imageDate = findViewById(R.id.searchImageDate);
+            TextView imageUrl = findViewById(R.id.searchImageURL);
+            TextView imageHDUrl = findViewById(R.id.searchImageHdURL);
+            TextView imageExplanation = findViewById(R.id.searchImageExplanation);
+            ImageView newImage = findViewById(R.id.searchImageView);
+            TextView searchTitle = findViewById(R.id.searchImageTitle);
 
-            currentTemp.append(this.currTemp);
-            miniTemp.append(this.minTemp);
-            maxiTemp.append(this.maxTemp);
-            currWeather.setImageBitmap(this.currWeather);
-            uvIndex.append(this.uv);
+            if (this.hdUrl != null) {
+                imageTitle.setText(this.title);
+                imageHDUrl.setText(this.hdUrl);
+                searchTitle.setText(R.string.searchImageResult);
+            } else {
+                imageTitle.setText(this.title);
+                searchTitle.setText(R.string.searchVideoResult);
+            }
+            imageDate.setText(this.date);
+            imageUrl.setText(this.url);
+            imageExplanation.setText(this.explanation);
+            newImage.setImageBitmap(this.theImage);
 
-            ProgressBar progress = findViewById(R.id.progressWeather);
-            progress.setVisibility(View.INVISIBLE);
+            ProgressBar imageProgress = findViewById(R.id.downloadProgress);
+            imageProgress.setVisibility(View.INVISIBLE);
+
             super.onPostExecute(s);
         }
 
-        private void getImageInfo(String urlUv) throws IOException, JSONException {
+        private void getImageData(String imageURL) throws IOException {
 
-            HttpURLConnection urlConnection = getConnection(urlUv);
+            Bitmap image = null;
+            HttpURLConnection urlConnection = getConnection(this.url);
 
             int responseCode = urlConnection.getResponseCode();
             if (responseCode == 200) {
-                InputStream inputStream = new URL(urlUv).openStream();
+
+                image = BitmapFactory.decodeStream(urlConnection.getInputStream());
+            }
+
+            this.theImage = image;
+        }
+
+        private String getImageInfo(String imageURL) throws IOException, JSONException {
+
+            HttpURLConnection urlConnection = getConnection(imageURL);
+
+            int responseCode = urlConnection.getResponseCode();
+            if (responseCode == 200) {
+                InputStream inputStream = new URL(imageURL).openStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
                 StringBuilder sb = new StringBuilder();
                 String line = null;
@@ -158,8 +269,17 @@ public class SearchImage extends AppCompatActivity {
                 String result = sb.toString();
                 inputStream.close();
                 JSONObject jObject = new JSONObject(result);
-                this.uv = String.valueOf(jObject.getDouble("value"));
+                this.explanation = jObject.getString("explanation");
+                this.date = jObject.getString("date");
+                publishProgress(20);
+                this.title = jObject.getString("title");
+                publishProgress(40);
+                this.url = jObject.getString("url");
+                publishProgress(60);
+                this.hdUrl = jObject.getString("hdurl");
+                publishProgress(80);
             }
+            return this.url;
         }
     }
 }

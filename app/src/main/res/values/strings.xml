@@ -7,6 +7,8 @@
     <string name="goHome">Homepage</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="emailPrompt">Enter your email address:</string>
     <string name="emailHint">Type email here</string>
     <string name="passwordPrompt">Type your password:</string>
@@ -16,5 +18,9 @@
     <string name="searchImageButton">Search Image</string>
     <string name="saveImageButton">Save Image</string>
     <string name="pickerTitle">Choose The Image Date</string>
+    <string name="searchImageResult">Your Image Result</string>
+    <string name="searchVideoResult">Your Video Result</string>
+    <string name="dateOutRange">Your Date is In Future</string>
+    <string name="dateRangePickNewDate">Please pick a new date.</string>
 
 </resources>

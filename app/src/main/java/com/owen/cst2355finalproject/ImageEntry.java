@@ -1,29 +1,38 @@
 package com.owen.cst2355finalproject;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.URL;
-import java.util.Calendar;
-import java.util.Date;
 
 public class ImageEntry implements Serializable {
 
-    private long id;
+    private final long id;
     private final String title;
-    private final URL url;
-    private final Calendar date;
-    private final URL hdURL;
-    private final Bitmap imageFile;
+    private final String url;
+    private final String date;
+    private final String hdURL;
+    private final String explanation;
+    private byte[] imageFile = null;
 
-    public ImageEntry(long id, String title, URL url, Calendar date, URL hdURL, Bitmap imageFile) {
+    public ImageEntry(long id, String title, String url, String date, String hdURL, String explanation, Bitmap imageFile) {
 
         this.id = id;
         this.url = url;
         this.date = date;
         this.hdURL = hdURL;
+        this.explanation = explanation;
         this.title = title;
-        this.imageFile = imageFile;
+        try {
+            setSerializedImage(imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -35,19 +44,49 @@ public class ImageEntry implements Serializable {
         return id;
     }
 
-    public URL getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public Calendar getDate() {
+    public String getDate() {
         return date;
     }
 
-    public URL getHdURL() {
+    public String getHdURL() {
         return hdURL;
     }
 
-    public Bitmap getImageFile() {
-        return imageFile;
+    public String getExplanation() {
+        return explanation;
     }
+
+    public Bitmap getImageFile() throws IOException, ClassNotFoundException {
+
+        Bitmap imageBits = null;
+        ByteArrayInputStream imageInput = new ByteArrayInputStream(this.imageFile);
+        ObjectInputStream newImage = new ObjectInputStream(imageInput);
+        imageBits = BitmapFactory.decodeStream(newImage);
+        newImage.close();
+        imageInput.close();
+
+        return imageBits;
+    }
+
+    public void setSerializedImage(Bitmap serialize) throws IOException {
+
+        byte[] converted= null;
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        ObjectOutputStream objOut = new ObjectOutputStream(bytes);
+        serialize.compress(Bitmap.CompressFormat.PNG, 80, objOut);
+        converted = bytes.toByteArray();
+
+        objOut.flush();
+        objOut.close();
+        bytes.flush();
+        bytes.close();
+
+        this.imageFile = converted;
+        System.out.println(this.imageFile);
+    }
+
 }
