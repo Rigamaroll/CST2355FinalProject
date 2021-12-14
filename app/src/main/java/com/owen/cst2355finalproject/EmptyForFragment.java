@@ -18,6 +18,7 @@ public class EmptyForFragment extends AppCompatActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragmentFrame, imageFrag)
+                .disallowAddToBackStack()
                 .commit();
 
     }

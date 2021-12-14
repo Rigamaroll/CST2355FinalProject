@@ -9,10 +9,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +23,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,13 +60,21 @@ public class SearchImage extends AppCompatActivity {
         Button searchDate = findViewById(R.id.searchImageButton);
         Button saveImage = findViewById(R.id.saveImageButton);
 
+        TextView hdURL = findViewById(R.id.searchImageHdURL);
+        hdURL.setOnClickListener((click) -> {
+
+            Uri imageLocation = Uri.parse(hdURL.getText().toString());
+            Intent goBrowser = new Intent(Intent.ACTION_VIEW, imageLocation);
+            startActivity(goBrowser);
+
+        });
+
         datePicker = getDatePickerDialog(new DatePickerListener());
         datePicker.setTitle(R.string.pickerTitle);
 
         searchDate.setOnClickListener((click) -> {
 
             datePicker.show();
-            saveImage.setVisibility(View.INVISIBLE);
 
         });
 
@@ -77,18 +89,31 @@ public class SearchImage extends AppCompatActivity {
         });
     }
 
-    private void alertDate() {
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle(R.string.dateOutRange)
-                .setMessage(R.string.dateRangePickNewDate)
-                .setPositiveButton(R.string.yes, (click, arg) -> {
-                    datePicker.show();
-                })
-                .setNegativeButton(R.string.no, (click, arg) -> {
-                })
-                .create()
-                .show();
+    private void alertDate(String reason) {
+        String alertString = null;
+        switch (reason) {
+            case "past":
+                alertString = getString(R.string.dateRangePast);
+                break;
+            case "future":
+                alertString = getString(R.string.dateRangeFuture);
+                break;
+            case "video":
+                alertString = getString(R.string.dateRangeVideo);
+                break;
+            default:
+                break;
+        }
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setTitle(R.string.dateOutRange)
+                    .setMessage(alertString)
+                    .setPositiveButton(R.string.yes, (click, arg) -> {
+                        datePicker.show();
+                    })
+                    .setNegativeButton(R.string.no, (click, arg) -> {
+                    })
+                    .create()
+                    .show();
     }
 
     private void addToDB() throws MalformedURLException {
@@ -112,16 +137,15 @@ public class SearchImage extends AppCompatActivity {
         Bitmap newImage = theImage.getBitmap();
 
         long id = 0;
-
         ContentValues newRow = new ContentValues();
-        Cursor results = imageDB.rawQuery("SELECT MAX(" + ImageDbOpener.COL_ID + ") FROM " + ImageDbOpener.TABLE_NAME + ";", null, null);
+        Cursor results = imageDB.rawQuery("SELECT max(seq) FROM sqlite_sequence;", null, null);
         while (results.moveToNext()) {
 
             id = results.getLong(0) + 1;
         }
-
-        results.close();
-
+        if (results != null) {
+            results.close();
+        }
         ImageEntry imageEntry = new ImageEntry(id, title, url, date, hdUrl, explanation, newImage);
         ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
         byte[] bytes = null;
@@ -140,6 +164,7 @@ public class SearchImage extends AppCompatActivity {
 
         newRow.put(ImageDbOpener.COL_IMAGEENTRY_OBJECT, bytes);
         imageDB.insert(ImageDbOpener.TABLE_NAME, null, newRow);
+
     }
 
     private DatePickerDialog getDatePickerDialog(DatePickerDialog.OnDateSetListener listen) {
@@ -147,7 +172,6 @@ public class SearchImage extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         return new DatePickerDialog(this, listen, cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-
     }
 
     private class DatePickerListener implements DatePickerDialog.OnDateSetListener {
@@ -157,11 +181,17 @@ public class SearchImage extends AppCompatActivity {
 
             Calendar cal = Calendar.getInstance();
             cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+            Calendar earliest = Calendar.getInstance();
+            earliest.set(1995, 06, 20);
             if (cal.after(Calendar.getInstance())) {
 
-                alertDate();
+                alertDate("future");
 
+            } else if (cal.before(earliest)) {
+
+                alertDate("past");
             } else {
+
                 DateFormat imageDate = new SimpleDateFormat("yyyy-MM-dd");
                 String newDate = imageDate.format(cal.getTime());
                 ImageQuery request = new ImageQuery();
@@ -177,6 +207,7 @@ public class SearchImage extends AppCompatActivity {
         String url;
         String hdUrl;
         String explanation;
+        String mediaType;
         Bitmap theImage;
 
         /*
@@ -216,6 +247,16 @@ public class SearchImage extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
 
+            ProgressBar imageProgress = findViewById(R.id.downloadProgress);
+
+            if(this.mediaType == null || !this.mediaType.contentEquals("image")) {
+
+                alertDate("video");
+                imageProgress.setVisibility(View.INVISIBLE);
+                imageProgress.setProgress(0);
+                return;
+            }
+
             TextView imageTitle = findViewById(R.id.searchImageName);
             TextView imageDate = findViewById(R.id.searchImageDate);
             TextView imageUrl = findViewById(R.id.searchImageURL);
@@ -224,24 +265,16 @@ public class SearchImage extends AppCompatActivity {
             ImageView newImage = findViewById(R.id.searchImageView);
             TextView searchTitle = findViewById(R.id.searchImageTitle);
 
-            if (this.hdUrl != null) {
-                imageTitle.setText(this.title);
-                imageHDUrl.setText(this.hdUrl);
-                Button save = findViewById(R.id.saveImageButton);
-                save.setVisibility(View.VISIBLE);
-                searchTitle.setText(R.string.searchImageResult);
-            } else {
-                imageTitle.setText(this.title);
-                searchTitle.setText(R.string.searchVideoResult);
-            }
+            imageTitle.setText(this.title);
+            imageHDUrl.setText(this.hdUrl);
+            Button save = findViewById(R.id.saveImageButton);
+            save.setVisibility(View.VISIBLE);
+            searchTitle.setText(R.string.searchImageResult);
             imageDate.setText(this.date);
             imageUrl.setText(this.url);
             imageExplanation.setText(this.explanation);
             newImage.setImageBitmap(this.theImage);
-
-            ProgressBar imageProgress = findViewById(R.id.downloadProgress);
             imageProgress.setVisibility(View.INVISIBLE);
-
             super.onPostExecute(s);
         }
 
@@ -284,6 +317,8 @@ public class SearchImage extends AppCompatActivity {
                 publishProgress(60);
                 this.hdUrl = jObject.getString("hdurl");
                 publishProgress(80);
+                this.mediaType = jObject.getString("media_type");
+                System.out.println(this.mediaType);
             }
             return this.url;
         }

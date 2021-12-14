@@ -33,7 +33,6 @@ public class ImageEntry implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public String getTitle() {
@@ -62,7 +61,7 @@ public class ImageEntry implements Serializable {
 
     public Bitmap getImageFile() throws IOException, ClassNotFoundException {
 
-        Bitmap imageBits = null;
+        Bitmap imageBits;
         ByteArrayInputStream imageInput = new ByteArrayInputStream(this.imageFile);
         ObjectInputStream newImage = new ObjectInputStream(imageInput);
         imageBits = BitmapFactory.decodeStream(newImage);
@@ -74,7 +73,7 @@ public class ImageEntry implements Serializable {
 
     public void setImageFile(Bitmap serialize) throws IOException {
 
-        byte[] converted= null;
+        byte[] converted;
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         ObjectOutputStream objOut = new ObjectOutputStream(bytes);
         serialize.compress(Bitmap.CompressFormat.JPEG, 70, objOut);
@@ -84,7 +83,6 @@ public class ImageEntry implements Serializable {
         objOut.close();
         bytes.flush();
         bytes.close();
-
         this.imageFile = converted;
     }
 

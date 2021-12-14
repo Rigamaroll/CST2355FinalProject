@@ -43,14 +43,13 @@ public class ImageFragment extends Fragment {
         TextView fragmentURL = view.findViewById(R.id.fragmentURL);
         TextView fragmentHdURL = view.findViewById(R.id.fragmentHdURL);
         ImageView fragmentImage = view.findViewById((R.id.imageForFragment));
-        Button hideButton = view.findViewById(R.id.hideButton);
+        //Button hideButton = view.findViewById(R.id.hideButton);
 
-        hideButton.setOnClickListener((click) -> {
+        /*hideButton.setOnClickListener((click) -> {
 
             parentActivity.getSupportFragmentManager().beginTransaction().remove(this).commit();
-            parentActivity.getSupportFragmentManager().popBackStack();
 
-        });
+        });*/
 
 
 

@@ -54,14 +54,14 @@
 
     <TextView
         android:id="@+id/searchImageURL"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"/>
 
     <TextView
         android:id="@+id/searchImageHdURL"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"/>

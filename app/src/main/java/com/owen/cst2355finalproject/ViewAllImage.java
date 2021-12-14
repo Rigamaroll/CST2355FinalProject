@@ -3,7 +3,9 @@ package com.owen.cst2355finalproject;
 import static java.sql.DriverManager.getConnection;
 
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -38,12 +40,6 @@ public class ViewAllImage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_image);
 
-       /* Button searchImage = findViewById(R.id.goToSearchImage);
-            searchImage.setOnClickListener((click) ->{
-
-                Intent goSearchPage = new Intent(this, SearchImage.class);
-
-            });*/
         ListView imageList = findViewById(R.id.imageList);
         imageList.setAdapter(imageAdapter = new ImageListAdapter());
         loadFromDB();
@@ -65,10 +61,48 @@ public class ViewAllImage extends AppCompatActivity {
 
                 Intent seeImageInfo = new Intent(ViewAllImage.this, EmptyForFragment.class);
                 seeImageInfo.putExtras(getFragData(pos));
-                System.out.println("got to just before start activity");
                 startActivity(seeImageInfo);
             }
         });
+
+        /*
+        the longItemClickListener which determines what happens when a long
+        click occurs on the objects in the ListView.  No button does nothing.
+        Yes button deletes the message from the ListView and the database, and it
+        removes the fragment from the frame if it's a tablet.
+         */
+
+            imageList.setOnItemLongClickListener((p, b, pos, id) -> {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setTitle("Do you want to delete this?")
+
+                        //What is the message:
+                        .setMessage("The selected image is: " + storedImageList.get(pos).getTitle() + "\n" + "The database id is: " + id)
+
+                        //what the Yes button does:
+                        .setPositiveButton("Yes", (click, arg) -> {
+
+                            Fragment imageFrag = getSupportFragmentManager().findFragmentById(R.id.imageTitle);
+                            if (imageFrag != null) {
+
+                                getSupportFragmentManager().beginTransaction().remove(imageFrag).commit();
+
+                            }
+
+                            imageDB.delete(ImageDbOpener.TABLE_NAME, ImageDbOpener.COL_ID + " = ?",
+                                    new String[]{String.valueOf(id)});
+                            storedImageList.remove(pos);
+                            imageAdapter.notifyDataSetChanged();
+
+                        })
+                        //What the No button does:
+                        .setNegativeButton("No", (click, arg) -> {
+                        })
+
+                        //Show the dialog
+                        .create().show();
+                return true;
+            });
     }
 
     private Bundle getFragData(int pos) {
