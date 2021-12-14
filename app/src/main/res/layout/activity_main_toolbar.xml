@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:titleTextColor="@color/white"
+        app:titleTextColor="@color/black"
+        app:menu="@menu/toolbar_menu"
+        app:title="@string/app_name"
+        android:background="@color/white"
         android:id="@+id/mainToolBar"/>
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -18,7 +24,7 @@
 
         <com.google.android.material.navigation.NavigationView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
             app:itemBackground="@color/black"
@@ -28,4 +34,4 @@
             android:id="@+id/navView"/>
     </androidx.drawerlayout.widget.DrawerLayout>
 
-</merge>
+</LinearLayout>

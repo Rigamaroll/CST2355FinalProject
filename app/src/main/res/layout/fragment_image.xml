@@ -21,6 +21,7 @@
                 android:id="@+id/fragmentTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAlignment="center"
                 android:layout_gravity="center"
                 android:text="@string/imageTitle"
                 android:textColor="@color/white"

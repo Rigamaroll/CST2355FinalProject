@@ -1,15 +1,19 @@
 <resources>
     <!-- Page and App Titles -->
 
-    <string name="app_name">CST2355FinalProject</string>
-    <string name="title">Bienvenue au Viseur l\'Image de NASA \n</string>
-    <string name="imageListTitle">Images Téléchargées\n</string>
+    <string name="app_name">Viseur l\'Image de NASA</string>
+    <string name="title">Bienvenue au Viseur l\'Image de NASA\n</string>
+    <string name="viewAllImageTitle">Images Enregistrées\n</string>
+    <string name="searchImageTitle">Rechercher une Nouvelle Image</string>
+    <string name="version">Version 1.0</string>
+    <string name="dashBoardTitle">Tableau de Bord</string>
 
     <!--Login Page -->
 
     <string name="emailPrompt">Entrez votre adresse email:</string>
     <string name="emailHint">Tapez votre email ici</string>
     <string name="passwordPrompt">Tapez votre mot de passe:</string>
+    <string name="savePasswordCheck">Garder le Mot De Passe</string>
     <string name="loginButton">LOGIN</string>
 
     <!--DashBoard Page -->
@@ -20,7 +24,6 @@
 
     <!--SearchImage Page -->
 
-    <string name="searchImageTitle">Rechercher une Nouvelle Image</string>
     <string name="datePick">Choisissez la Date</string>
     <string name="searchImageButton">Rechercher l\'Image</string>
     <string name="saveImageButton">Enregistrer l\'Image</string>
@@ -33,11 +36,11 @@
 
     <!--Image Fragment -->
 
-    <string name="imageDate">Date:</string>
+    <string name="imageDate">\nDate:\n</string>
     <string name="imageTitle"></string>
-    <string name="imageExplanation">Explication:</string>
-    <string name="imageURL">URL:</string>
-    <string name="imageHdURL">HD URL:</string>
+    <string name="imageExplanation">\nExplication:\n</string>
+    <string name="imageURL">\nURL:\n</string>
+    <string name="imageHdURL">\nHD URL:\n</string>
     <string name="hideButton">HIDE</string>
 
     <!-- Navigation -->

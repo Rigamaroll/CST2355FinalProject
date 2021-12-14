@@ -2,6 +2,8 @@ package com.owen.cst2355finalproject;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
@@ -24,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
@@ -51,11 +54,18 @@ public class SearchImage extends AppCompatActivity {
 
     SQLiteDatabase imageDB;
     DatePickerDialog datePicker;
+    MainToolBar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_image);
+
+        NavigationView navView = findViewById(R.id.navView);
+        Toolbar tools = findViewById(R.id.mainToolBar);
+        DrawerLayout drawer = findViewById(R.id.navDrawer);
+        //toolbar = new MainToolBar(this, this, tools, drawer, navView);
+        toolbar.getToolbar().setTitle(R.string.searchImageTitle);
 
         Button searchDate = findViewById(R.id.searchImageButton);
         Button saveImage = findViewById(R.id.saveImageButton);

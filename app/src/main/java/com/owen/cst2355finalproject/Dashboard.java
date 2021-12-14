@@ -14,28 +14,19 @@ import com.google.android.material.navigation.NavigationView;
 
 public class Dashboard extends AppCompatActivity {
 
-    private MainToolBar theBar;
+    MainToolBar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        /*theBar = new MainToolBar(this, findViewById(R.id.mainToolBar), findViewById(R.id.navDrawer), findViewById((R.id.navView)));
-        setSupportActionBar(theBar.getTools());
-        theBar.getToggleDrawer().syncState();
-        theBar.getNavView().setNavigationItemSelectedListener(theBar);
-        theBar.getDrawer().addDrawerListener(theBar.getToggleDrawer());*/
-
         /*NavigationView navView = findViewById(R.id.navView);
-        navView.setNavigationItemSelectedListener(theBar);*/
-
-        final Button toolbarButton = findViewById(R.id.goToMainToolbar);
-        toolbarButton.setOnClickListener((click) -> {
-
-            goActivity("toolbar");
-
-        });
+        Toolbar tools = findViewById(R.id.mainToolBar);
+        DrawerLayout drawer = findViewById(R.id.navDrawer);*/
+        //toolbar = new MainToolBar(this, this, tools, drawer, navView);
+        toolbar = new MainToolBar(this, this);
+        toolbar.getToolbar().setTitle(R.string.dashBoardTitle);
 
         final Button goSearchButton = findViewById(R.id.goToSearchImage);
         goSearchButton.setOnClickListener((click) -> {
@@ -57,9 +48,6 @@ public class Dashboard extends AppCompatActivity {
         Intent goActivity = null;
         switch (activity) {
 
-            case "toolbar":
-                goActivity = new Intent(this, MainToolBar.class);
-                break;
             case "view":
                 goActivity = new Intent(this, ViewAllImage.class);
                 break;

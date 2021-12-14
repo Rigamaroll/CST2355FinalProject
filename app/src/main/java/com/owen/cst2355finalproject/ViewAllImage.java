@@ -5,6 +5,8 @@ import static java.sql.DriverManager.getConnection;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
@@ -22,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.material.navigation.NavigationView;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -34,11 +38,18 @@ public class ViewAllImage extends AppCompatActivity {
     private CopyOnWriteArrayList<ImageEntry> storedImageList = new CopyOnWriteArrayList<ImageEntry>();
     private ImageListAdapter imageAdapter;
     SQLiteDatabase imageDB;
+    MainToolBar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_image);
+
+        NavigationView navView = findViewById(R.id.navView);
+        Toolbar tools = findViewById(R.id.mainToolBar);
+        DrawerLayout drawer = findViewById(R.id.navDrawer);
+        //toolbar = new MainToolBar(this, this, tools, drawer, navView);
+        toolbar.getToolbar().setTitle(R.string.viewAllImageTitle);
 
         ListView imageList = findViewById(R.id.imageList);
         imageList.setAdapter(imageAdapter = new ImageListAdapter());
@@ -103,6 +114,14 @@ public class ViewAllImage extends AppCompatActivity {
                         .create().show();
                 return true;
             });
+    }
+
+    private void setToolbar() {
+
+        NavigationView navView = findViewById(R.id.navView);
+        Toolbar tools = findViewById(R.id.mainToolBar);
+        DrawerLayout drawer = findViewById(R.id.navDrawer);
+       // toolbar = new MainToolBar(this, this, tools, drawer, navView);
     }
 
     private Bundle getFragData(int pos) {

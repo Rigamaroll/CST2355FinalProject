@@ -1,15 +1,19 @@
 <resources>
     <!-- Page and App Titles -->
 
-    <string name="app_name">CST2355FinalProject</string>
+    <string name="app_name">NASA Daily Image Viewer</string>
     <string name="title">Welcome to NASA Daily Image Viewer\n</string>
-    <string name="imageListTitle">Images Downloaded\n</string>
+    <string name="viewAllImageTitle">Stored Images</string>
+    <string name="searchImageTitle">Search Image</string>
+    <string name="version">Version 1.0</string>
+    <string name="dashBoardTitle">Dashboard</string>
 
     <!--Login Page -->
 
     <string name="emailPrompt">Enter your email address:</string>
     <string name="emailHint">Type email here</string>
     <string name="passwordPrompt">Type your password:</string>
+    <string name="savePasswordCheck">Save Password</string>
     <string name="loginButton">LOGIN</string>
 
     <!--DashBoard Page -->
@@ -20,7 +24,6 @@
 
     <!--SearchImage Page -->
 
-    <string name="searchImageTitle">Search a New Image</string>
     <string name="datePick">Choose the Date</string>
     <string name="searchImageButton">Search Image</string>
     <string name="saveImageButton">Save Image</string>
@@ -33,11 +36,11 @@
 
     <!--Image Fragment -->
 
-    <string name="imageDate">Date:</string>
+    <string name="imageDate">\nDate:</string>
     <string name="imageTitle"></string>
-    <string name="imageExplanation">Explanation:</string>
-    <string name="imageURL">URL:</string>
-    <string name="imageHdURL">HD URL:</string>
+    <string name="imageExplanation">\nExplanation:\n</string>
+    <string name="imageURL">\nURL:</string>
+    <string name="imageHdURL">\nHD URL:</string>
     <string name="hideButton">HIDE</string>
 
     <!-- Navigation -->
