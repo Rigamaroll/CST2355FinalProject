@@ -45,11 +45,8 @@ public class ViewAllImage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_image);
 
-        NavigationView navView = findViewById(R.id.navView);
-        Toolbar tools = findViewById(R.id.mainToolBar);
-        DrawerLayout drawer = findViewById(R.id.navDrawer);
-        //toolbar = new MainToolBar(this, this, tools, drawer, navView);
-        toolbar.getToolbar().setTitle(R.string.viewAllImageTitle);
+        /*toolbar = new MainToolBar(this, this);
+        toolbar.getToolbar().setTitle(R.string.viewAllImageTitle);*/
 
         ListView imageList = findViewById(R.id.imageList);
         imageList.setAdapter(imageAdapter = new ImageListAdapter());
@@ -114,14 +111,6 @@ public class ViewAllImage extends AppCompatActivity {
                         .create().show();
                 return true;
             });
-    }
-
-    private void setToolbar() {
-
-        NavigationView navView = findViewById(R.id.navView);
-        Toolbar tools = findViewById(R.id.mainToolBar);
-        DrawerLayout drawer = findViewById(R.id.navDrawer);
-       // toolbar = new MainToolBar(this, this, tools, drawer, navView);
     }
 
     private Bundle getFragData(int pos) {

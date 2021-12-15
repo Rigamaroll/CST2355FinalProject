@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
+
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -21,10 +23,6 @@ public class Dashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        /*NavigationView navView = findViewById(R.id.navView);
-        Toolbar tools = findViewById(R.id.mainToolBar);
-        DrawerLayout drawer = findViewById(R.id.navDrawer);*/
-        //toolbar = new MainToolBar(this, this, tools, drawer, navView);
         toolbar = new MainToolBar(this, this);
         toolbar.getToolbar().setTitle(R.string.dashBoardTitle);
 
@@ -41,7 +39,6 @@ public class Dashboard extends AppCompatActivity {
             goActivity("view");
 
         });
-
     }
 
     private void goActivity (String activity) {

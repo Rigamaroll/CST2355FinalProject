@@ -19,19 +19,21 @@
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/navDrawer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="250dp"
         tools:openDrawer="start">
 
         <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navView"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="250dp"
             android:layout_gravity="start"
+            android:background="@color/material_on_background_disabled"
             android:fitsSystemWindows="true"
-            app:itemBackground="@color/black"
             app:headerLayout="@layout/drawer_header_layout"
+            app:itemBackground="@color/black"
             app:itemTextColor="@color/white"
-            app:menu="@menu/nav_drawer_menu"
-            android:id="@+id/navView"/>
+            app:menu="@menu/nav_drawer_menu" />
+
     </androidx.drawerlayout.widget.DrawerLayout>
 
 </LinearLayout>

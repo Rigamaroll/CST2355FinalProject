@@ -10,9 +10,9 @@
     tools:context=".Dashboard">
 
     <include
-        android:id="@+id/navBar"
-        layout="@layout/activity_main_toolbar"/>
-
+        layout="@layout/activity_main_toolbar"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,6 +20,7 @@
         android:text="@string/title"
         android:textColor="@color/white"
         android:textSize="45dp" />
+
     <Button
         android:id="@+id/goToSearchImage"
         android:layout_width="wrap_content"

@@ -34,20 +34,18 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
     DrawerLayout drawer;
     ActionBarDrawerToggle toggleDrawer;
     NavigationView navView;
-
-    //public MainToolBar(@NonNull Context context, AppCompatActivity active, Toolbar tools, DrawerLayout drawer, NavigationView navView) {
+    Activity active;
 
     public MainToolBar(@NonNull Context context, AppCompatActivity active) {
+
         this.context = context;
-        //this.toolbar = tools;
-        this.drawer = drawer;
+        this.active = active;
         navView = active.findViewById(R.id.navView);
         toolbar = active.findViewById(R.id.mainToolBar);
         drawer = active.findViewById(R.id.navDrawer);
-        this.toggleDrawer = new ActionBarDrawerToggle(active, drawer, toolbar, R.string.open, R.string.close);
+        toggleDrawer = new ActionBarDrawerToggle(active, drawer, toolbar, R.string.open, R.string.close);
         drawer.addDrawerListener(toggleDrawer);
         toggleDrawer.syncState();
-        //this.navView = navView;
         navView.setNavigationItemSelectedListener(this);
 
     }
@@ -82,7 +80,6 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
     public boolean onOptionsItemSelected(MenuItem item) {
 
         String toastMessage = null;
-        Snackbar funnySnacks = null;
 
         switch (item.getItemId()) {
 
@@ -96,7 +93,6 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
                 //toastMessage = getString(R.string.toolBarOctopus);
                 break;
         }
-
 
         Toast.makeText(this.context, toastMessage, Toast.LENGTH_LONG).show();
 
@@ -127,7 +123,6 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
                 Intent logout = new Intent(context, MainActivity.class);
                 logout.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(logout);
-
                 break;
         }
 
