@@ -15,6 +15,14 @@
     <string name="passwordPrompt">Tapez votre mot de passe:</string>
     <string name="savePasswordCheck">Garder le Mot De Passe</string>
     <string name="loginButton">LOGIN</string>
+    <string name="helpLogin">Bienvenue dans le fichier d\'aide de l\'écran de connexion. Lors d\'une nouvelle installation, un message toast apparaîtra.
+        Il vous dira d\'entrer votre email et un mot de passe pour configurer la connexion
+        À moins que vous ne réinstalliez, cette invite n\'apparaîtra plus. Saisissez une adresse e-mail et un mot de passe.
+        Les magasins d\'applications ces informations pour vous protéger vos photos avec vos identifiants. Il y a une case à cocher pour
+        pré-remplir votre mot de passe à chaque fois que vous vous connectez. Vous devez le définir à chaque connexion.\n
+        Champ de saisie de l\'e-mail : Entrez votre e-mail ici.\n
+        Champ du mot de passe : Saisissez votre mot de passe ici.\n
+        Enregistrer la vérification du mot de passe : Enregistre le champ du mot de passe pour la prochaine connexion.</string>
 
     <!--DashBoard Page -->
 
@@ -23,6 +31,16 @@
     <string name="goHome">Page d\'Accueil</string>
     <string name="totalPhotos">Total de photos stockées: </string>
     <string name="lastLogin">Dernière Connexion:\n</string>
+    <string name="enterAPIKey">Votre Clé de API:\n</string>
+    <string name="setAPIKey">Définir la Clé</string>
+    <string name="apiKeySet">Votre clé API a été définie.</string>
+    <string name="helpDashboard">Bienvenue sur le tableau de bord. Sur cette page, vous verrez des informations
+        sur votre application actuelle.  Il indique le nombre d\'images que vous avez stockées, la date de votre
+        dernière connexion et votre clé API.  La clé API peut être modifiée en en saisissant une nouvelle.
+        Si vous laissez la clé vide, ce sera par défaut la clé de l\'école.
+        Après avoir cliqué sur le bouton \'Définir la Clé\', cela définira votre nouvelle clé.  Vous pouvez naviguer avec le menu du tiroir de navigation.\n
+
+        \nChamp de clé API: Saisissez la clé ici.</string>
 
     <!--SearchImage Page -->
 
@@ -35,6 +53,27 @@
     <string name="dateRangeFuture">Votre Date est Dans le Futur</string>
     <string name="dateRangePast">Votre Date est Trop Vieux</string>
     <string name="dateRangeVideo">Votre Date est Une Vidéo</string>
+    <string name="helpSearchImage">Bienvenue sur la page de recherche. Cette page vous permet de rechercher une nouvelle image quotidienne.
+        Il vous suffit de cliquer sur le bouton \'Rechercher une image\' et un calendrier apparaîtra. Choisissez la date
+        que vous souhaitez sélectionner, puis cliquez sur ok. La page téléchargera automatiquement l\'image appropriée
+        pour la date choisie. Si vous sélectionnez une date dans le futur, avant le début de l\'image du jour, ou
+        une date où il y a une vidéo au lieu d\'une image, cela vous donnera un message d\'erreur.
+        Une fois les informations affichées, vous pouvez sélectionner le bouton \'Enregistrer l\'image\' pour enregistrer, le \'Rechercher l\'image\'
+        pour sélectionner une nouvelle date, cliquez sur l\'URL HD pour ouvrir le navigateur et voir la nouvelle image,
+        ou vous pouvez naviguer avec le menu du tiroir de navigation.
+
+</string>
+
+    <!--ViewAllImage Page-->
+
+    <string name="helpViewAllImage">Bienvenue sur la page des images stockées. Sur cette page, vous pourrez voir
+        toutes vos images enregistrées dans une liste. La photo s\'affiche avec le titre en dessous. Si vous cliquez sur la photo,
+        il ouvrira une nouvelle fenêtre ou un nouveau cadre si vous utilisez une tablette, et affichera l\'image avec son titre, date, explication,
+        URL normale et HDURL. Si vous cliquez sur l\'URL HD, cela vous amènera à votre navigateur et chargera l\'image HD. Simplement
+        cliquez sur votre flèche de retour si vous souhaitez fermer la nouvelle fenêtre et revenir à votre liste. Si vous maintenez la photo enfoncée
+        la liste, il vous donnera la possibilité de supprimer la photo de votre application. Vous pouvez naviguer avec le menu du tiroir de navigation.
+
+</string>
 
     <!--Image Fragment -->
 
@@ -54,4 +93,7 @@
 
     <string name="yes">Oui</string>
     <string name="no">Non</string>
+    <string name="ok">OK</string>
+    <string name="helpAlert">d\'Aide</string>
+
 </resources>

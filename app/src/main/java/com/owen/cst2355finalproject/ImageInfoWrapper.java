@@ -9,6 +9,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+
+/**
+ * Class containing the list in memory for the ListView and image information, a DbOpener object
+ * for getting the database.  Takes the Context of the opening activity when constructed.
+ * The CopyOnWriteArrayList is static and thread safe so that all the activities can access the same one.
+ */
+
 public class ImageInfoWrapper {
 
     private static CopyOnWriteArrayList<ImageEntry> images;
@@ -17,7 +24,7 @@ public class ImageInfoWrapper {
 
     public ImageInfoWrapper(Context context) {
 
-        this.images = new CopyOnWriteArrayList<ImageEntry>();
+        images = new CopyOnWriteArrayList<ImageEntry>();
         this.context = context;
         opener = new ImageDbOpener(this.context);
         if (images.size() == 0) {
@@ -44,13 +51,27 @@ public class ImageInfoWrapper {
         return images.size();
     }
 
+    /**
+     * Returns a database either writable or readable
+     *
+     * @param type true or false for Writable or Readable respectively
+     * @return the SQLite database either readable or writable
+     */
+
     public SQLiteDatabase getImageDb(boolean type) {
 
         SQLiteDatabase imageDb = type ? opener.getWritableDatabase() : opener.getReadableDatabase();
         return imageDb;
     }
 
-    public boolean exists (String imageDate) {
+    /**
+     * Checks if the CopyOnWriteArrayList contains the existing image by checking the dates.
+     *
+     * @param imageDate Date of the image to be checked.
+     * @return true if the image is already in the database.
+     */
+
+    public boolean exists(String imageDate) {
 
         for (ImageEntry dates : images) {
 
@@ -61,6 +82,12 @@ public class ImageInfoWrapper {
         }
         return false;
     }
+
+    /**
+     * Gets the results of the query in the Image table of the database.  Then calls the convertFromBlob() method
+     * to convert the Blob back into an ImageEntry object, and the ImageEntry object is put
+     * into the CopyOnWriteArrayList.  This is done for each row in the Cursor.
+     */
 
     private void loadFromDB() {
 
@@ -79,14 +106,18 @@ public class ImageInfoWrapper {
 
             byte[] imageEntryObject = results.getBlob(imageObject);
             ImageEntry newImageEntry = convertFromBlob(imageEntryObject);
-            long id = results.getLong(idIndex);
-            //add message to ArrayList
             setImages(newImageEntry);
         }
         results.close();
         getImageDb(true).close();
     }
 
+    /**
+     * Converts the Blob back into an ImageEntry object
+     *
+     * @param imageEntryObject the byte[] object that was a blob.
+     * @return the ImageEntry object
+     */
     public ImageEntry convertFromBlob(byte[] imageEntryObject) {
         ImageEntry newImageEntry = null;
         try {

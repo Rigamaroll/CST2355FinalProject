@@ -10,6 +10,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+/**
+ * Container object for all the Image information.  Implements
+ * Serializable so it can be passed in and out of the database with one step,
+ * and it doesn't need to be rebuilt everytime.
+ * Needed to store the image as a byte array so that the object
+ * could be serialized into the database.  The bitmap isn't a serializable
+ * object.
+ */
+
 public class ImageEntry implements Serializable {
 
     private final long id;
@@ -59,6 +68,14 @@ public class ImageEntry implements Serializable {
         return explanation;
     }
 
+    /**
+     * Returns the Bitmap image being stored as a byte[] by converting it back into a Bitmap
+     *
+     * @return The Bitmap image file
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+
     public Bitmap getImageFile() throws IOException, ClassNotFoundException {
 
         Bitmap imageBits;
@@ -71,6 +88,12 @@ public class ImageEntry implements Serializable {
         return imageBits;
     }
 
+    /**
+     * Sets the imageFile byte array with the Bitmap image.
+     *
+     * @param serialize
+     * @throws IOException
+     */
     public void setImageFile(Bitmap serialize) throws IOException {
 
         byte[] converted;

@@ -46,6 +46,29 @@
         android:textColor="@color/white"
         android:text="@string/lastLogin"/>
 
+    <TextView
+        android:id="@+id/enterAPIKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:textColor="@color/white"
+        android:text="@string/enterAPIKey"/>
+
+    <EditText
+        android:id="@+id/personalAPI"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:textColor="@color/white"/>
+
+        <Button
+            android:id="@+id/setAPI"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_grey"
+            android:text="@string/setAPIKey"
+            android:textColor="@color/black" />
+
 </LinearLayout>
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navView"

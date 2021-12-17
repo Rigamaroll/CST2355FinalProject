@@ -1,5 +1,6 @@
 package com.owen.cst2355finalproject;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -18,6 +19,13 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences passFile = null;
     private LoginCredentials login;
 
+    /**
+     * when the Activity is created it checks if this is the first time using the app and gives a toast message
+     * it then gets the shared preferences for the email and password, and sets the buttons and input fields.
+     *
+     * @param savedInstanceState
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -35,6 +43,20 @@ public class MainActivity extends AppCompatActivity {
         loadSharedPrefs();
         EditText inputEmail = findViewById(R.id.enterEmail);
         EditText inputPass = findViewById(R.id.enterPassword);
+        Button helpButton = findViewById(R.id.helpLoginButton);
+
+        helpButton.setOnClickListener((click) -> {
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setTitle(R.string.helpAlert)
+                    .setMessage(getString(R.string.helpLogin))
+                    .setPositiveButton(R.string.ok, (clicker, arg) -> {
+
+                    })
+                    .create()
+                    .show();
+
+        });
 
         if (savedInstanceState == null) {
 
@@ -43,22 +65,17 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
-
         final Button loginButton = findViewById(R.id.loginButton);
-        loginButton.setOnClickListener((click) -> {
-
-            authenticate(inputEmail, inputPass);
-
-        });
+        loginButton.setOnClickListener((click) -> authenticate(inputEmail, inputPass));
 
     }
 
     /**
      * Authenticate will take the login information and test the password then
      * set the login Object.
-     * @param email
-     * @param pass
+     *
+     * @param email the users email
+     * @param pass  the users password
      */
 
     private void authenticate(EditText email, EditText pass) {
@@ -87,9 +104,10 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * this method saves the SharedPrefs to the phone.  It takes a LoginCredentials
-     * object and determines if the password is to be saved or not.
+     * object and determines if the password is to be saved or not.  This will also set
+     * the lastLogin key to enable the information in the dashboard for Last Login.
      *
-     * @param log
+     * @param log an object of LoginCredentials which contains the present credentials
      */
 
     private void saveSharedPrefs(LoginCredentials log) {
@@ -117,9 +135,10 @@ public class MainActivity extends AppCompatActivity {
      * takes two EditTexts for the email and password and sets the
      * LoginCredentials object, then saves the SharedPrefs.
      *
-     * @param email
-     * @param pass
+     * @param email user's email
+     * @param pass  user's password
      */
+
     private void setPrefs(EditText email, EditText pass) {
 
         login.setEmail(email.getText().toString());
@@ -131,8 +150,9 @@ public class MainActivity extends AppCompatActivity {
     /**
      * this method creates the sharedPref with the new password in it
      *
-     * @param newPass
+     * @param newPass user's new password for first time installing
      */
+
     private void setNewPassword(EditText newPass) {
 
         SharedPreferences.Editor edit = passFile.edit();
@@ -169,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
 
             this.email = email;
             this.pass = pass;
-
         }
 
         protected String getEmail() {
@@ -190,7 +209,5 @@ public class MainActivity extends AppCompatActivity {
 
             this.pass = pass;
         }
-
-
     }
 }

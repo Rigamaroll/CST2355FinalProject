@@ -1,22 +1,14 @@
 package com.owen.cst2355finalproject;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,24 +18,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -52,19 +37,30 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class SearchImage extends AppCompatActivity {
+/**
+ * Class which is for searching the new images.  Contains a DatePickerDialog and Async
+ * functionality.
+ */
+
+public class SearchImage extends MainToolBar {
 
     DatePickerDialog datePicker;
-    MainToolBar toolbar;
     ImageInfoWrapper wrap;
 
+    /**
+     * creation method for the activitu which sets the ImageInfoWrapper containing
+     * the necessary image info the app.  It then sets up the Toolbar, the DatePicker, and lets
+     * clicking on the HdURL go to the browser to see the HD image.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_image);
         wrap = new ImageInfoWrapper(this);
-        toolbar = new MainToolBar(this, this);
-        toolbar.getToolbar().setTitle(R.string.searchImageTitle);
+        initialize();
+        getToolbar().setTitle(R.string.searchImageTitle);
 
         Button searchDate = findViewById(R.id.searchImageButton);
         Button saveImage = findViewById(R.id.saveImageButton);
@@ -94,9 +90,13 @@ public class SearchImage extends AppCompatActivity {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-
         });
     }
+
+    /**
+     * Creates an alert dialog if the date picked is not a valid date.
+     * @param reason reason for this dialog being created
+     */
 
     private void alertDate(String reason) {
         String alertString = null;
@@ -113,28 +113,36 @@ public class SearchImage extends AppCompatActivity {
             default:
                 break;
         }
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-            alertDialogBuilder.setTitle(R.string.dateOutRange)
-                    .setMessage(alertString)
-                    .setPositiveButton(R.string.yes, (click, arg) -> {
-                        datePicker.show();
-                    })
-                    .setNegativeButton(R.string.no, (click, arg) -> {
-                    })
-                    .create()
-                    .show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(R.string.dateOutRange)
+                .setMessage(alertString)
+                .setPositiveButton(R.string.yes, (click, arg) -> {
+                    datePicker.show();
+                })
+                .setNegativeButton(R.string.no, (click, arg) -> {
+                })
+                .create()
+                .show();
     }
 
-    private void addToDB() throws MalformedURLException {
+    /**
+     * Adds the new ImageEntry object to the database.  First it gets the information
+     * from the fields, then it checks to confirm if the image is already saved in which case it exits
+     * the method.  After this, it gets the next row ID from the database to create the object with.
+     * It creates the ImageEntryObject then serializes it to a byte array, and puts it in the database
+     * as a blob, and it adds the entry to the in memory ArrayList for current viewing.
+     *
+     * @throws MalformedURLException
+     */
 
-        //ImageDbOpener dbOpener = new ImageDbOpener(this);
+    private void addToDB() throws MalformedURLException {
 
         TextView imageTitle = findViewById(R.id.searchImageName);
         TextView imageDate = findViewById(R.id.searchImageDate);
         TextView imageUrl = findViewById(R.id.searchImageURL);
         TextView imageHDUrl = findViewById(R.id.searchImageHdURL);
         TextView imageExplanation = findViewById(R.id.searchImageExplanation);
-        ImageView imageImage =findViewById(R.id.searchImageView);
+        ImageView imageImage = findViewById(R.id.searchImageView);
 
         String title = String.valueOf(imageTitle.getText());
         String date = String.valueOf(imageDate.getText());
@@ -186,6 +194,12 @@ public class SearchImage extends AppCompatActivity {
 
     }
 
+
+    /**
+     * Returns a new DatePickerDialog
+     * @param listen the Listener object
+     * @return
+     */
     private DatePickerDialog getDatePickerDialog(DatePickerDialog.OnDateSetListener listen) {
 
         Calendar cal = Calendar.getInstance();
@@ -193,8 +207,19 @@ public class SearchImage extends AppCompatActivity {
                 cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
     }
 
+    /**
+     * Listener for the DatePicker
+     */
     private class DatePickerListener implements DatePickerDialog.OnDateSetListener {
 
+        /**
+         * Sets what happens when a date is chosen in the date dialog.
+         *
+         * @param datePicker
+         * @param year
+         * @param month
+         * @param day
+         */
         @Override
         public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int day) {
 
@@ -214,11 +239,16 @@ public class SearchImage extends AppCompatActivity {
                 DateFormat imageDate = new SimpleDateFormat("yyyy-MM-dd");
                 String newDate = imageDate.format(cal.getTime());
                 ImageQuery request = new ImageQuery();
-                request.execute("https://api.nasa.gov/planetary/apod?api_key=DgPLcIlnmN0Cwrzcg3e9NraFaYLIDI68Ysc6Zh3d&date=" + newDate);
+                request.execute("https://api.nasa.gov/planetary/apod?api_key="
+                        + getSharedPreferences("apiKey", MODE_PRIVATE).getString("key", "")
+                        + "&date=" + newDate);
             }
         }
     }
 
+    /**
+     * The AsyncTask for querying the new images
+     */
     private class ImageQuery extends AsyncTask<String, Integer, String> {
 
         String title;
@@ -229,8 +259,8 @@ public class SearchImage extends AppCompatActivity {
         String mediaType;
         Bitmap theImage;
 
-        /*
-         *gets a new HttpURLConnection
+        /**
+         * gets a new HttpURLConnection
          */
         private HttpURLConnection getConnection(String location) throws IOException {
 
@@ -239,8 +269,8 @@ public class SearchImage extends AppCompatActivity {
             return urlConnection;
         }
 
-        /*
-         *calls each appropriate method to get the correct information for the weather displaying app
+        /**
+         * calls each appropriate method to get the image information for displaying
          */
         @Override
         protected String doInBackground(String... args) {
@@ -254,6 +284,10 @@ public class SearchImage extends AppCompatActivity {
             return null;
         }
 
+        /**
+         * looks after the ProgressBar
+         * @param values
+         */
         @Override
         protected void onProgressUpdate(Integer... values) {
 
@@ -263,12 +297,18 @@ public class SearchImage extends AppCompatActivity {
             super.onProgressUpdate(values);
         }
 
+        /**
+         * Determines what happens after the Async is completed.  This will set the ImageView and TextViews
+         * for the page, so they can be displayed with the downloaded information.
+         * @param s
+         */
+
         @Override
         protected void onPostExecute(String s) {
 
             ProgressBar imageProgress = findViewById(R.id.downloadProgress);
 
-            if(this.mediaType == null || !this.mediaType.contentEquals("image")) {
+            if (this.mediaType == null || !this.mediaType.contentEquals("image")) {
 
                 alertDate("video");
                 imageProgress.setVisibility(View.INVISIBLE);
@@ -297,10 +337,16 @@ public class SearchImage extends AppCompatActivity {
             super.onPostExecute(s);
         }
 
+        /**
+         * Downloads the image from the URL provided.
+         * @param imageURL the location of the image
+         * @throws IOException
+         */
+
         private void getImageData(String imageURL) throws IOException {
 
             Bitmap image = null;
-            HttpURLConnection urlConnection = getConnection(this.url);
+            HttpURLConnection urlConnection = getConnection(imageURL);
 
             int responseCode = urlConnection.getResponseCode();
             if (responseCode == 200) {
@@ -310,6 +356,15 @@ public class SearchImage extends AppCompatActivity {
 
             this.theImage = image;
         }
+
+        /**
+         * Downloads the JSON object containing the information about the image and its location.
+         * It then sets the instance variables with the appropriate JSON fields.
+         * @param imageURL location of the JSON object for the image information
+         * @return
+         * @throws IOException
+         * @throws JSONException
+         */
 
         private String getImageInfo(String imageURL) throws IOException, JSONException {
 

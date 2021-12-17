@@ -15,6 +15,16 @@
     <string name="passwordPrompt">Type your password:</string>
     <string name="savePasswordCheck">Save Password</string>
     <string name="loginButton">LOGIN</string>
+    <string name="helpLogin">Welcome to the login screen.  On a fresh install, a toast message will appear.
+        It will tell you to enter your email and a password to setup the login.
+        Unless you reinstall, this prompt will not appear again.  Enter an email address and password.
+        The app stores this information for you protecting your photos with your credentials.
+        There is a checkbox to prepopulate your password each time you login.  You must set this each login.\n\n
+
+        Email:  Enter your email here.\n
+        Password: Enter your password here.\n
+        Login Button: Logs in.\n
+        Save Password: Password field saves for next login.</string>
 
     <!--DashBoard Page -->
 
@@ -23,6 +33,16 @@
     <string name="goHome">Homepage</string>
     <string name="totalPhotos">Total stored photos: </string>
     <string name="lastLogin">Last Login:\n</string>
+    <string name="enterAPIKey">Your API Key:\n</string>
+    <string name="setAPIKey">Set Key</string>
+    <string name="apiKeySet">Your API key has been set.</string>
+    <string name="helpDashboard">Welcome to the dashboard.  On this page you will see information about your current app.
+        It shows how many images you have stored, when you last logged in, and your API key.
+        The API key can be edited by entering a new one.  If you leave the key blank, it will default to the school key.
+        After you click on the \'SET Key\' button, it will set your new key.  You can navigate away with the navigation drawer menu.\n
+
+        \nAPI key field:  Enter key here.
+        </string>
 
     <!--SearchImage Page -->
 
@@ -35,6 +55,25 @@
     <string name="dateRangeFuture">Your Date is in The Future</string>
     <string name="dateRangePast">Your Date is Too Old</string>
     <string name="dateRangeVideo">Your Date is a Video</string>
+    <string name="helpSearchImage">Welcome to the search page.  This page allows you to search for a new daily image.
+        You simple need to click on the \'Search Image\' button and a calendar will appear.  Choose the date
+        you would like to select, and click ok.  The page will automatically download the appropriate image
+        for the date selected.  If you select a date in the future, before they began image of the day, or
+        a date where there is a video instead of an image, it will give you an error message.
+        Once the information has been displayed, you can select the \'Save Image\' button to save, the \'Search Image\'
+        button to select a new date, click on the HDURL to open the browser and see new image,
+        or you can navigate away with the navigation drawer menu.
+     </string>
+
+    <!--ViewAllImage Page-->
+
+    <string name="helpViewAllImage">Welcome to the stored images page.  On this page, you will be able to view
+        all your saved images in a list.  The photo is displayed with the title underneath.  If you click on the photo,
+        it will open a new window or frame if you are using a tablet, and display the image with its title, date, explanation,
+        regular URL, and the HDURL.  If you click on the HDURL it will take you to your browser and load the HD image.  Simply
+        click your back arrow if you want to close the new window and return to your list.  If you push and hold the photo in
+        the list, it will give you an option to delete the photo from your app.  You can navigate away with the navigation drawer menu.
+    </string>
 
     <!--Image Fragment -->
 
@@ -54,6 +93,8 @@
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="ok">OK</string>
+    <string name="helpAlert">Help</string>
 
 
 </resources>

@@ -74,4 +74,11 @@
             android:text="Save Password"
             android:textColor="@color/white" />
     </LinearLayout>
+    <Button
+        android:id="@+id/helpLoginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/light_grey"
+        android:text="@string/helpAlert"
+        android:textColor="@color/black" />
 </LinearLayout>
