@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,7 +31,7 @@ public class Dashboard extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-
+        String lastLogin = getIntent().getStringExtra("lastLogin");
         wrap = new ImageInfoWrapper(this);
 
         toolbar = new MainToolBar(this, this);
@@ -38,5 +39,7 @@ public class Dashboard extends AppCompatActivity {
 
         TextView totalPhotos = findViewById(R.id.totalPhotos);
         totalPhotos.append(String.valueOf(wrap.listSize()));
+        TextView lastLog = findViewById(R.id.lastLogin);
+        lastLog.append(lastLogin == null ? "" : lastLogin);
     }
 }

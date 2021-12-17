@@ -2,21 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/item1"
-        android:title="Bread"
-        android:icon="@drawable/bread"
+    <item android:id="@+id/helpScreen"
+        android:title="Help"
+        android:icon="@drawable/help_icon"
         android:orderInCategory="25"
-        app:showAsAction="ifRoom"/>
-
-    <item android:id="@+id/item2"
-        android:title="Hamburger"
-        android:icon="@drawable/hamburger"
-        android:orderInCategory="50"
-        app:showAsAction="ifRoom"/>
-
-    <item android:id="@+id/item3"
-        android:title="Octopus"
-        android:icon="@drawable/octopus"
-        android:orderInCategory="75"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 </menu>

@@ -11,6 +11,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
     SharedPreferences saveLogin = null;
     SharedPreferences passFile = null;
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+
+
         final Button loginButton = findViewById(R.id.loginButton);
         loginButton.setOnClickListener((click) -> {
 
@@ -58,7 +62,11 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void authenticate(EditText email, EditText pass) {
+
         Intent dashboard = new Intent(this, Dashboard.class);
+        String lastLogin = saveLogin.getString("lastLogin", null);
+        dashboard.putExtra("lastLogin", lastLogin);
+
         if (passFile.getString("password", "").contentEquals("")) {
 
             setNewPassword(pass);
@@ -71,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             wrongPass.show();
 
         } else {
+
             setPrefs(email, pass);
             startActivity(dashboard);
         }
@@ -84,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void saveSharedPrefs(LoginCredentials log) {
+
         CheckBox savePass = findViewById(R.id.passwordCheckbox);
         SharedPreferences.Editor edit = saveLogin.edit();
 
@@ -92,13 +102,14 @@ public class MainActivity extends AppCompatActivity {
             edit.putString("loginEmail", log.getEmail());
             edit.putString("loginPass", log.getPass());
 
+
         } else {
 
             edit.putString("loginEmail", log.getEmail());
             edit.putString("loginPass", "");
 
         }
-
+        edit.putString("lastLogin", new Date().toString());
         edit.commit();
     }
 

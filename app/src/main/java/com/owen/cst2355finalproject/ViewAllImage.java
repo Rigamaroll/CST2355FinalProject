@@ -35,10 +35,9 @@ import java.sql.SQLException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ViewAllImage extends AppCompatActivity {
-   // private CopyOnWriteArrayList<ImageEntry> storedImageList = new CopyOnWriteArrayList<ImageEntry>();
+
     private ImageListAdapter imageAdapter;
     private ImageInfoWrapper wrap;
-    //SQLiteDatabase imageDB;
     MainToolBar toolbar;
 
     @Override
@@ -51,7 +50,7 @@ public class ViewAllImage extends AppCompatActivity {
 
         ListView imageList = findViewById(R.id.imageList);
         imageList.setAdapter(imageAdapter = new ImageListAdapter());
-        //loadFromDB();
+
         boolean isTablet = findViewById(R.id.fragmentFrame) != null;
 
         imageList.setOnItemClickListener((p, b, pos, id) -> {
@@ -149,14 +148,14 @@ public class ViewAllImage extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             LayoutInflater inflater = getLayoutInflater();
-            ImageEntry imagefile = wrap.getImages(position);
+            ImageEntry imageFile = wrap.getImages(position);
 
             // Depending if the message is sent or received, load the correct template
             View view = inflater.inflate(R.layout.image_list, parent, false);
 
             Bitmap image = null;
             try {
-                image = imagefile.getImageFile();
+                image = imageFile.getImageFile();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
@@ -164,51 +163,9 @@ public class ViewAllImage extends AppCompatActivity {
             }
 
             ((ImageView) view.findViewById(R.id.imageItem)).setImageBitmap(image);
-            ((TextView) view.findViewById(R.id.imageTitle)).setText(imagefile.getTitle());
+            ((TextView) view.findViewById(R.id.imageTitle)).setText(imageFile.getTitle());
 
             return view;
         }
     }
-
-    /*private void loadFromDB() {
-
-        //get a database connection:
-        //ImageDbOpener dbOpener = new ImageDbOpener(this);
-        //imageDB = wrap.getImageDb(true);
-
-        //query all the results from the database:
-        Cursor results = wrap.getImageDb(true).rawQuery("SELECT " + ImageDbOpener.COL_ID + ", "
-                + ImageDbOpener.COL_IMAGEENTRY_OBJECT + " FROM IMAGE;", null);
-
-        //find the column indices:
-
-        int idIndex = results.getColumnIndex(ImageDbOpener.COL_ID);
-        int imageObject = results.getColumnIndex(ImageDbOpener.COL_IMAGEENTRY_OBJECT);
-
-        //iterate over the results, return true if there is a next item:
-
-        while (results.moveToNext()) {
-
-            byte[] imageEntryObject = results.getBlob(imageObject);
-            ImageEntry newImageEntry = convertFromBlob(imageEntryObject);
-            long id = results.getLong(idIndex);
-            //add message to ArrayList
-            wrap.setImages(newImageEntry);
-        }
-        results.close();
-    }
-
-    public ImageEntry convertFromBlob(byte[] imageEntryObject) {
-        ImageEntry newImageEntry = null;
-        try {
-            ByteArrayInputStream imageInput = new ByteArrayInputStream(imageEntryObject);
-            ObjectInputStream newImage = new ObjectInputStream(imageInput);
-            newImageEntry = (ImageEntry) newImage.readObject();
-            newImage.close();
-            imageInput.close();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return newImageEntry;
-    }*/
 }

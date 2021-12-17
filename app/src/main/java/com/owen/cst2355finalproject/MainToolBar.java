@@ -3,6 +3,7 @@ package com.owen.cst2355finalproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatCallback;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -81,22 +82,23 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        String toastMessage = null;
+        String alertString = null;
 
         switch (item.getItemId()) {
 
-            case R.id.item1:
-                toastMessage = getString(R.string.open);
-                break;
-            case R.id.item2:
-                toastMessage = getString(R.string.close);
-                break;
-            case R.id.item3:
-                //toastMessage = getString(R.string.toolBarOctopus);
-                break;
+            /*case R.id.helpScreen:
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setTitle(R.string.dateOutRange)
+                        .setMessage(alertString)
+                        .setPositiveButton(R.string.yes, (click, arg) -> {
+                            datePicker.show();
+                        })
+                        .setNegativeButton(R.string.no, (click, arg) -> {
+                        })
+                        .create()
+                        .show();
+                break;*/
         }
-
-        Toast.makeText(this.context, toastMessage, Toast.LENGTH_LONG).show();
 
         return super.onOptionsItemSelected(item);
     }
@@ -107,21 +109,25 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
         switch(item.getItemId()) {
 
             case R.id.goHome:
+                drawer.close();
                 Intent goDash = new Intent(context, Dashboard.class);
                 context.startActivity(goDash);
                 break;
 
             case R.id.goSearchPage:
+                drawer.close();
                 Intent goSearch = new Intent(context, SearchImage.class);
                 context.startActivity(goSearch);
                 break;
 
             case R.id.goViewImagePage:
+                drawer.close();
                 Intent goViewAll = new Intent(context, ViewAllImage.class);
                 context.startActivity(goViewAll);
                 break;
 
             case R.id.logout:
+                drawer.close();
                 Intent logout = new Intent(context, MainActivity.class);
                 logout.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(logout);

@@ -22,6 +22,7 @@
     <string name="goViewImagePage">Voir Toutes Images</string>
     <string name="goHome">Page d\'Accueil</string>
     <string name="totalPhotos">Total de photos stockées: </string>
+    <string name="lastLogin">Dernière Connexion:\n</string>
 
     <!--SearchImage Page -->
 

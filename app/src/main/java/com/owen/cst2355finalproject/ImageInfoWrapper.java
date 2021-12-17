@@ -13,7 +13,6 @@ public class ImageInfoWrapper {
 
     private static CopyOnWriteArrayList<ImageEntry> images;
     private ImageDbOpener opener;
-    private SQLiteDatabase imageDb;
     private Context context;
 
     public ImageInfoWrapper(Context context) {
@@ -45,22 +44,25 @@ public class ImageInfoWrapper {
         return images.size();
     }
 
-    public void setOpenerContext (Context context) {
-
-        this.opener = new ImageDbOpener(context);
-    }
-
     public SQLiteDatabase getImageDb(boolean type) {
 
         SQLiteDatabase imageDb = type ? opener.getWritableDatabase() : opener.getReadableDatabase();
         return imageDb;
     }
 
-    private void loadFromDB() {
+    public boolean exists (String imageDate) {
 
-        //get a database connection:
-        //ImageDbOpener dbOpener = new ImageDbOpener(this);
-        //imageDB = wrap.getImageDb(true);
+        for (ImageEntry dates : images) {
+
+            if (dates.getDate().contentEquals(imageDate)) {
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void loadFromDB() {
 
         //query all the results from the database:
         Cursor results = getImageDb(true).rawQuery("SELECT " + ImageDbOpener.COL_ID + ", "

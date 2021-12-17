@@ -22,6 +22,7 @@
     <string name="goViewImagePage">See All Images</string>
     <string name="goHome">Homepage</string>
     <string name="totalPhotos">Total stored photos: </string>
+    <string name="lastLogin">Last Login:\n</string>
 
     <!--SearchImage Page -->
 

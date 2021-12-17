@@ -8,6 +8,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -25,6 +26,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -52,7 +54,6 @@ import java.util.Calendar;
 
 public class SearchImage extends AppCompatActivity {
 
-    //SQLiteDatabase imageDB;
     DatePickerDialog datePicker;
     MainToolBar toolbar;
     ImageInfoWrapper wrap;
@@ -137,6 +138,16 @@ public class SearchImage extends AppCompatActivity {
 
         String title = String.valueOf(imageTitle.getText());
         String date = String.valueOf(imageDate.getText());
+
+        if (wrap.exists(date)) {
+
+            String snackString = "You already have that date's image";
+            Snackbar.make(imageTitle, snackString, Snackbar.LENGTH_LONG)
+                    .setBackgroundTint(getColor(R.color.teal_700))
+                    .show();
+            return;
+        }
+
         String url = String.valueOf(imageUrl.getText());
         String hdUrl = String.valueOf(imageHDUrl.getText());
         String explanation = String.valueOf(imageExplanation.getText());
