@@ -35,22 +35,23 @@ import java.sql.SQLException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ViewAllImage extends AppCompatActivity {
-    private CopyOnWriteArrayList<ImageEntry> storedImageList = new CopyOnWriteArrayList<ImageEntry>();
+   // private CopyOnWriteArrayList<ImageEntry> storedImageList = new CopyOnWriteArrayList<ImageEntry>();
     private ImageListAdapter imageAdapter;
-    SQLiteDatabase imageDB;
+    private ImageInfoWrapper wrap;
+    //SQLiteDatabase imageDB;
     MainToolBar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_image);
-
-        /*toolbar = new MainToolBar(this, this);
-        toolbar.getToolbar().setTitle(R.string.viewAllImageTitle);*/
+        wrap = new ImageInfoWrapper(this);
+        toolbar = new MainToolBar(this, this);
+        toolbar.getToolbar().setTitle(R.string.viewAllImageTitle);
 
         ListView imageList = findViewById(R.id.imageList);
         imageList.setAdapter(imageAdapter = new ImageListAdapter());
-        loadFromDB();
+        //loadFromDB();
         boolean isTablet = findViewById(R.id.fragmentFrame) != null;
 
         imageList.setOnItemClickListener((p, b, pos, id) -> {
@@ -85,7 +86,7 @@ public class ViewAllImage extends AppCompatActivity {
                 alertDialogBuilder.setTitle("Do you want to delete this?")
 
                         //What is the message:
-                        .setMessage("The selected image is: " + storedImageList.get(pos).getTitle() + "\n" + "The database id is: " + id)
+                        .setMessage("The selected image is: " + wrap.getImages(pos).getTitle() + "\n" + "The database id is: " + id)
 
                         //what the Yes button does:
                         .setPositiveButton("Yes", (click, arg) -> {
@@ -97,9 +98,9 @@ public class ViewAllImage extends AppCompatActivity {
 
                             }
 
-                            imageDB.delete(ImageDbOpener.TABLE_NAME, ImageDbOpener.COL_ID + " = ?",
+                            wrap.getImageDb(true).delete(ImageDbOpener.TABLE_NAME, ImageDbOpener.COL_ID + " = ?",
                                     new String[]{String.valueOf(id)});
-                            storedImageList.remove(pos);
+                            wrap.deleteImages(pos);
                             imageAdapter.notifyDataSetChanged();
 
                         })
@@ -116,7 +117,7 @@ public class ViewAllImage extends AppCompatActivity {
     private Bundle getFragData(int pos) {
 
         Bundle fragData = new Bundle();
-        fragData.putSerializable("imageEntry", storedImageList.get(pos));
+        fragData.putSerializable("imageEntry", wrap.getImages(pos));
         return fragData;
     }
 
@@ -127,12 +128,12 @@ public class ViewAllImage extends AppCompatActivity {
 
         public int getCount() {
 
-            return storedImageList.size();
+            return wrap.listSize();
         }
 
         public ImageEntry getItem(int position) {
 
-            return storedImageList.get(position);
+            return wrap.getImages(position);
         }
 
         public long getItemId(int position) {
@@ -148,7 +149,7 @@ public class ViewAllImage extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             LayoutInflater inflater = getLayoutInflater();
-            ImageEntry imagefile = storedImageList.get(position);
+            ImageEntry imagefile = wrap.getImages(position);
 
             // Depending if the message is sent or received, load the correct template
             View view = inflater.inflate(R.layout.image_list, parent, false);
@@ -169,31 +170,20 @@ public class ViewAllImage extends AppCompatActivity {
         }
     }
 
-    private void loadFromDB() {
+    /*private void loadFromDB() {
 
         //get a database connection:
-        ImageDbOpener dbOpener = new ImageDbOpener(this);
-        imageDB = dbOpener.getWritableDatabase();
+        //ImageDbOpener dbOpener = new ImageDbOpener(this);
+        //imageDB = wrap.getImageDb(true);
 
         //query all the results from the database:
-        Cursor results = imageDB.rawQuery("SELECT " + ImageDbOpener.COL_ID + ", "
+        Cursor results = wrap.getImageDb(true).rawQuery("SELECT " + ImageDbOpener.COL_ID + ", "
                 + ImageDbOpener.COL_IMAGEENTRY_OBJECT + " FROM IMAGE;", null);
-                /*+ ", " + ImageDbOpener.COL_DATE
-                + ImageDbOpener.COL_URL + ", " + ImageDbOpener.COL_HD_URL + "  FROM IMAGE", null);
-*/
+
         //find the column indices:
 
         int idIndex = results.getColumnIndex(ImageDbOpener.COL_ID);
         int imageObject = results.getColumnIndex(ImageDbOpener.COL_IMAGEENTRY_OBJECT);
-
-        //log the results
-
-       // printCursor(results, imageDB.getVersion());
-
-        //After passing the cursor to the logging method, I had to reset the location of the cursor
-
-      /*  results.moveToFirst();
-        results.moveToPrevious();*/
 
         //iterate over the results, return true if there is a next item:
 
@@ -203,7 +193,7 @@ public class ViewAllImage extends AppCompatActivity {
             ImageEntry newImageEntry = convertFromBlob(imageEntryObject);
             long id = results.getLong(idIndex);
             //add message to ArrayList
-            storedImageList.add(newImageEntry);
+            wrap.setImages(newImageEntry);
         }
         results.close();
     }
@@ -220,5 +210,5 @@ public class ViewAllImage extends AppCompatActivity {
             e.printStackTrace();
         }
         return newImageEntry;
-    }
+    }*/
 }

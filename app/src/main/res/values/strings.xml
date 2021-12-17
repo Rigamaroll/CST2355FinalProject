@@ -21,6 +21,7 @@
     <string name="goSearchPage">Search New Image</string>
     <string name="goViewImagePage">See All Images</string>
     <string name="goHome">Homepage</string>
+    <string name="totalPhotos">Total stored photos: </string>
 
     <!--SearchImage Page -->
 

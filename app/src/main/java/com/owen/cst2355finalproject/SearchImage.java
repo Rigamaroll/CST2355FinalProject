@@ -52,17 +52,18 @@ import java.util.Calendar;
 
 public class SearchImage extends AppCompatActivity {
 
-    SQLiteDatabase imageDB;
+    //SQLiteDatabase imageDB;
     DatePickerDialog datePicker;
     MainToolBar toolbar;
+    ImageInfoWrapper wrap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_image);
-
-        /*toolbar = new MainToolBar(this, this);
-        toolbar.getToolbar().setTitle(R.string.searchImageTitle);*/
+        wrap = new ImageInfoWrapper(this);
+        toolbar = new MainToolBar(this, this);
+        toolbar.getToolbar().setTitle(R.string.searchImageTitle);
 
         Button searchDate = findViewById(R.id.searchImageButton);
         Button saveImage = findViewById(R.id.saveImageButton);
@@ -125,8 +126,7 @@ public class SearchImage extends AppCompatActivity {
 
     private void addToDB() throws MalformedURLException {
 
-        ImageDbOpener dbOpener = new ImageDbOpener(this);
-        imageDB = dbOpener.getWritableDatabase();
+        //ImageDbOpener dbOpener = new ImageDbOpener(this);
 
         TextView imageTitle = findViewById(R.id.searchImageName);
         TextView imageDate = findViewById(R.id.searchImageDate);
@@ -145,7 +145,7 @@ public class SearchImage extends AppCompatActivity {
 
         long id = 0;
         ContentValues newRow = new ContentValues();
-        Cursor results = imageDB.rawQuery("SELECT max(seq) FROM sqlite_sequence;", null, null);
+        Cursor results = wrap.getImageDb(true).rawQuery("SELECT max(seq) FROM sqlite_sequence;", null, null);
         while (results.moveToNext()) {
 
             id = results.getLong(0) + 1;
@@ -170,7 +170,8 @@ public class SearchImage extends AppCompatActivity {
         }
 
         newRow.put(ImageDbOpener.COL_IMAGEENTRY_OBJECT, bytes);
-        imageDB.insert(ImageDbOpener.TABLE_NAME, null, newRow);
+        wrap.getImageDb(true).insert(ImageDbOpener.TABLE_NAME, null, newRow);
+        wrap.setImages(imageEntry);
 
     }
 
@@ -325,7 +326,6 @@ public class SearchImage extends AppCompatActivity {
                 this.hdUrl = jObject.getString("hdurl");
                 publishProgress(80);
                 this.mediaType = jObject.getString("media_type");
-                System.out.println(this.mediaType);
             }
             return this.url;
         }
