@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        int versionCode = BuildConfig.VERSION_CODE;
-        String versionName = BuildConfig.VERSION_NAME;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if ((getSharedPreferences("login", Context.MODE_PRIVATE).getString("loginEmail", "").contentEquals(""))) {
