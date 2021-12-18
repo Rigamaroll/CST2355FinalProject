@@ -44,7 +44,7 @@
         android:background="@color/material_on_background_disabled"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/drawer_header_layout"
-        app:itemBackground="@color/black"
-        app:itemTextColor="@color/white"
+        app:itemBackground="@color/white"
+        app:itemTextColor="@color/black"
         app:menu="@menu/nav_drawer_menu" />
 </androidx.drawerlayout.widget.DrawerLayout>

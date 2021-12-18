@@ -4,7 +4,7 @@
 
     <item android:id="@+id/helpScreen"
         android:title="Help"
-        android:icon="@drawable/help_icon"
+        android:icon="@drawable/question_mark_round_line"
         android:orderInCategory="25"
         app:showAsAction="always"/>
 </menu>

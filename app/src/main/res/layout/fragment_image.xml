@@ -64,14 +64,6 @@
                 android:textColor="@color/white"
                 android:textSize="20dp" />
 
-           <!-- <Button
-                android:id="@+id/hideButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/light_grey"
-                android:text="@string/hideButton"
-                android:textColor="@color/black" />-->
-
         </LinearLayout>
     </FrameLayout>
 </ScrollView>
