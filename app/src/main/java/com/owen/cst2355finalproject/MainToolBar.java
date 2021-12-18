@@ -106,9 +106,7 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
 
         String alertText = helpAlert();
 
-        switch (item.getItemId()) {
-
-            case R.id.helpScreen:
+        if  (String.valueOf(item.getItemId()).contentEquals(String.valueOf(R.id.helpScreen))) {
 
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                 alertDialogBuilder.setTitle(R.string.helpAlert)
