@@ -43,7 +43,6 @@
         android:id="@+id/fragmentFrame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/imageList"
         android:paddingHorizontal="10dp">
 
     </FrameLayout>

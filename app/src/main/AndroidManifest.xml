@@ -26,11 +26,6 @@
         <activity
             android:name=".MainToolBar"
             android:exported="false" />
-        <!--
-<activity
-            android:name=".MainToolBar"
-            android:exported="false" />
-        -->
         <activity
             android:name=".MainActivity"
             android:exported="true" >

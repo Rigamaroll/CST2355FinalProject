@@ -28,10 +28,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        int versionCode = BuildConfig.VERSION_CODE;
+        String versionName = BuildConfig.VERSION_NAME;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        System.out.println(versionCode);
+        System.out.println(versionName);
         if ((getSharedPreferences("login", Context.MODE_PRIVATE).getString("loginEmail", "").contentEquals(""))) {
             Toast newUser = Toast.makeText(this, "You haven't used the app yet.  " +
                     "Entering your email and password will setup the app with your personal information", Toast.LENGTH_LONG);
@@ -119,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
 
             edit.putString("loginEmail", log.getEmail());
             edit.putString("loginPass", log.getPass());
-
 
         } else {
 
