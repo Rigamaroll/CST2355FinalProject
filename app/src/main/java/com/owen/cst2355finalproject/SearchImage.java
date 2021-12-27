@@ -293,13 +293,13 @@ public class SearchImage extends MainToolBar {
             TextView imageHDUrl = findViewById(R.id.searchImageHdURL);
             TextView imageExplanation = findViewById(R.id.searchImageExplanation);
             ImageView newImage = findViewById(R.id.searchImageView);
-            TextView searchTitle = findViewById(R.id.searchImageTitle);
+            //TextView searchTitle = findViewById(R.id.searchImageTitle);
 
             imageTitle.setText(this.title);
             imageHDUrl.setText(this.hdUrl);
             Button save = findViewById(R.id.saveImageButton);
             save.setVisibility(View.VISIBLE);
-            searchTitle.setText(R.string.searchImageResult);
+            //searchTitle.setText(R.string.searchImageResult);
             imageDate.setText(this.date);
             imageUrl.setText(this.url);
             imageExplanation.setText(this.explanation);

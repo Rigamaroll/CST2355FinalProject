@@ -24,15 +24,6 @@
     <include layout="@layout/activity_main_toolbar"
         />
 
-    <TextView
-        android:id="@+id/searchImageTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@color/white"
-        android:text="@string/searchImageTitle"
-        android:textSize="30dp" />
-
     <ImageView
         android:id="@+id/searchImageView"
         android:layout_width="wrap_content"
@@ -110,15 +101,6 @@
 
 </LinearLayout>
 </ScrollView>
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/material_on_background_disabled"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/drawer_header_layout"
-        app:itemBackground="@color/white"
-        app:itemTextColor="@color/black"
-        app:menu="@menu/nav_drawer_menu" />
+    <include
+        layout="@layout/nav_view_layout"/>
 </androidx.drawerlayout.widget.DrawerLayout>
