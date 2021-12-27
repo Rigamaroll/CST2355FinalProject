@@ -55,6 +55,7 @@
     <string name="dateRangeFuture">Your Date is in The Future</string>
     <string name="dateRangePast">Your Date is Too Old</string>
     <string name="dateRangeVideo">Your Date is a Video</string>
+    <string name="saveToast">Image saved</string>
     <string name="helpSearchImage">Welcome to the search page.  This page allows you to search for a new daily image.
         You simple need to click on the \'Search Image\' button and a calendar will appear.  Choose the date
         you would like to select, and click ok.  The page will automatically download the appropriate image
@@ -67,6 +68,7 @@
 
     <!--ViewAllImage Page-->
 
+    <string name="deleteToast">Image Deleted</string>
     <string name="helpViewAllImage">Welcome to the stored images page.  On this page, you will be able to view
         all your saved images in a list.  The photo is displayed with the title underneath.  If you click on the photo,
         it will open a new window or frame if you are using a tablet, and display the image with its title, date, explanation,

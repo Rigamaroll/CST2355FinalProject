@@ -59,7 +59,7 @@ public class ImageFragment extends Fragment {
 
         try {
             fragmentImage.setImageBitmap(bundleImage.getImageFile());
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

@@ -71,12 +71,11 @@ public class ImageEntry implements Serializable {
     /**
      * Returns the Bitmap image being stored as a byte[] by converting it back into a Bitmap
      *
-     * @return The Bitmap image file
+     * @return The Bitmap image
      * @throws IOException
-     * @throws ClassNotFoundException
      */
 
-    public Bitmap getImageFile() throws IOException, ClassNotFoundException {
+    public Bitmap getImageFile() throws IOException {
 
         Bitmap imageBits;
         ByteArrayInputStream imageInput = new ByteArrayInputStream(this.imageFile);
@@ -91,7 +90,7 @@ public class ImageEntry implements Serializable {
     /**
      * Sets the imageFile byte array with the Bitmap image.
      *
-     * @param serialize
+     * @param serialize the Bitmap image for the object
      * @throws IOException
      */
     public void setImageFile(Bitmap serialize) throws IOException {

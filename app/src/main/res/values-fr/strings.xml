@@ -53,6 +53,7 @@
     <string name="dateRangeFuture">Votre Date est Dans le Futur</string>
     <string name="dateRangePast">Votre Date est Trop Vieux</string>
     <string name="dateRangeVideo">Votre Date est Une Vidéo</string>
+    <string name="saveToast">Image enregistrée</string>
     <string name="helpSearchImage">Bienvenue sur la page de recherche. Cette page vous permet de rechercher une nouvelle image quotidienne.
         Il vous suffit de cliquer sur le bouton \'Rechercher une image\' et un calendrier apparaîtra. Choisissez la date
         que vous souhaitez sélectionner, puis cliquez sur ok. La page téléchargera automatiquement l\'image appropriée
@@ -66,6 +67,7 @@
 
     <!--ViewAllImage Page-->
 
+    <string name="deleteToast">Image Supprimée</string>
     <string name="helpViewAllImage">Bienvenue sur la page des images stockées. Sur cette page, vous pourrez voir
         toutes vos images enregistrées dans une liste. La photo s\'affiche avec le titre en dessous. Si vous cliquez sur la photo,
         il ouvrira une nouvelle fenêtre ou un nouveau cadre si vous utilisez une tablette, et affichera l\'image avec son titre, date, explication,

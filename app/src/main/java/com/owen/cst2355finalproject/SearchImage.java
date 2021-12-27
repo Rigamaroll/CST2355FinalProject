@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -162,7 +163,8 @@ public class SearchImage extends MainToolBar {
         ImageEntry imageEntry = new ImageEntry(id, title, url, date, hdUrl, explanation, newImage);
         dao.createEntry(imageEntry);
         ImageInfoWrapper.setImages(imageEntry);
-
+        Toast saveToast = Toast.makeText(this, R.string.saveToast, Toast.LENGTH_LONG);
+        saveToast.show();
     }
 
 

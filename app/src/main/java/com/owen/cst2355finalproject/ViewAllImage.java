@@ -14,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -44,52 +45,14 @@ public class ViewAllImage extends MainToolBar {
         ListView imageList = findViewById(R.id.imageList);
         imageList.setAdapter(imageAdapter = new ImageListAdapter());
 
-        boolean isTablet = findViewById(R.id.fragmentFrame) != null;
-
         imageList.setOnItemClickListener((p, b, pos, id) -> {
 
-            if (isTablet) {
-
-                ImageFragment imageFrag = new ImageFragment();
-                imageFrag.setArguments(getFragData(pos));
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragmentFrame, imageFrag)
-                        .addToBackStack(null)
-                        .commit();
-
-            } else {
-
-                Intent seeImageInfo = new Intent(ViewAllImage.this, EmptyForFragment.class);
-                seeImageInfo.putExtras(getFragData(pos));
-                startActivity(seeImageInfo);
-            }
+            setFragment(pos);
         });
 
         imageList.setOnItemLongClickListener((p, b, pos, id) -> {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-            alertDialogBuilder.setTitle("Do you want to delete this?")
 
-                    .setMessage("The selected image is: " + ImageInfoWrapper.getImages(pos).getTitle() + "\n" + "The database id is: " + id)
-
-                    .setPositiveButton("Yes", (click, arg) -> {
-
-                        Fragment imageFrag = getSupportFragmentManager().findFragmentById(R.id.imageTitle);
-                        if (imageFrag != null) {
-
-                            getSupportFragmentManager().beginTransaction().remove(imageFrag).commit();
-
-                        }
-                        dao.deleteEntry(id);
-                        ImageInfoWrapper.deleteImages(pos);
-                        imageAdapter.notifyDataSetChanged();
-
-                    })
-
-                    .setNegativeButton("No", (click, arg) -> {
-                    })
-
-                    .create().show();
+            deleteListItem(id, pos);
             return true;
         });
     }
@@ -106,6 +69,65 @@ public class ViewAllImage extends MainToolBar {
         Bundle fragData = new Bundle();
         fragData.putSerializable("imageEntry", ImageInfoWrapper.getImages(pos));
         return fragData;
+    }
+
+    /**
+     * Sets the fragments for the ImageEntry by first determining which layout is being run.
+     * @param pos the index number in the CopyOnWriteArrayList storing the ImageEntry objects
+     */
+
+    private void setFragment(int pos) {
+
+        boolean isTablet = findViewById(R.id.fragmentFrame) != null;
+
+        if (isTablet) {
+
+            ImageFragment imageFrag = new ImageFragment();
+            imageFrag.setArguments(getFragData(pos));
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentFrame, imageFrag)
+                    .addToBackStack(null)
+                    .commit();
+        } else {
+
+            Intent seeImageInfo = new Intent(ViewAllImage.this, EmptyForFragment.class);
+            seeImageInfo.putExtras(getFragData(pos));
+            startActivity(seeImageInfo);
+        }
+    }
+
+    /**
+     * Creates the AlertDialog to decide if delete the item or not.
+     * @param id database id number for finding row to delete
+     * @param pos the index number in the CopyOnWriteArrayList storing the ImageEntry objects
+     */
+    private void deleteListItem (long id, int pos) {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Do you want to delete this?")
+
+                .setMessage("The selected image is: " + ImageInfoWrapper.getImages(pos).getTitle() + "\n" + "The database id is: " + id)
+                .setPositiveButton("Yes", (click, arg) -> {
+
+                    Fragment imageFrag = getSupportFragmentManager().findFragmentById(R.id.imageTitle);
+
+                    if (imageFrag != null) {
+
+                        getSupportFragmentManager().beginTransaction().remove(imageFrag).commit();
+                    }
+
+                    dao.deleteEntry(id);
+                    ImageInfoWrapper.deleteImages(pos);
+                    imageAdapter.notifyDataSetChanged();
+                    Toast deleteToast = Toast.makeText(this, R.string.deleteToast, Toast.LENGTH_LONG);
+                    deleteToast.show();
+                })
+
+                .setNegativeButton("No", (click, arg) -> {
+                })
+
+                .create().show();
     }
 
     /**
@@ -148,8 +170,6 @@ public class ViewAllImage extends MainToolBar {
             try {
                 image = imageFile.getImageFile();
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
 
