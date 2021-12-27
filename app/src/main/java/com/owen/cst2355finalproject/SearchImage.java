@@ -396,4 +396,5 @@ public class SearchImage extends MainToolBar {
             return this.url;
         }
     }
+
 }

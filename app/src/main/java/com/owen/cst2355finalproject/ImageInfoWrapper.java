@@ -8,6 +8,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -20,16 +22,15 @@ public class ImageInfoWrapper {
 
     private static CopyOnWriteArrayList<ImageEntry> images;
     private ImageDbOpener opener;
-    private Context context;
 
     public ImageInfoWrapper(Context context) {
 
         images = new CopyOnWriteArrayList<ImageEntry>();
-        this.context = context;
-        opener = new ImageDbOpener(this.context);
+        opener = new ImageDbOpener(context);
         if (images.size() == 0) {
 
-            loadFromDB();
+           loadFromDB();
+
         }
     }
 
