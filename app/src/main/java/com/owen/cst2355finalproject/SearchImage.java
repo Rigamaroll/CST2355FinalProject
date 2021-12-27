@@ -3,9 +3,7 @@ package com.owen.cst2355finalproject;
 import androidx.appcompat.app.AlertDialog;
 
 import android.app.DatePickerDialog;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -25,11 +23,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -45,7 +41,7 @@ import java.util.Calendar;
 public class SearchImage extends MainToolBar {
 
     DatePickerDialog datePicker;
-    ImageInfoWrapper wrap;
+    ApplicationDAO dao;
 
     /**
      * creation method for the activitu which sets the ImageInfoWrapper containing
@@ -58,7 +54,7 @@ public class SearchImage extends MainToolBar {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_image);
-        wrap = new ImageInfoWrapper(this);
+        dao = new ApplicationDAO(this);
         initialize();
         getToolbar().setTitle(R.string.searchImageTitle);
 
@@ -147,7 +143,7 @@ public class SearchImage extends MainToolBar {
         String title = String.valueOf(imageTitle.getText());
         String date = String.valueOf(imageDate.getText());
 
-        if (wrap.exists(date)) {
+        if (ImageInfoWrapper.exists(date)) {
 
             String snackString = "You already have that date's image";
             Snackbar.make(imageTitle, snackString, Snackbar.LENGTH_LONG)
@@ -162,35 +158,10 @@ public class SearchImage extends MainToolBar {
         BitmapDrawable theImage = (BitmapDrawable) imageImage.getDrawable();
         Bitmap newImage = theImage.getBitmap();
 
-        long id = 0;
-        ContentValues newRow = new ContentValues();
-        Cursor results = wrap.getImageDb(true).rawQuery("SELECT max(seq) FROM sqlite_sequence;", null, null);
-        while (results.moveToNext()) {
-
-            id = results.getLong(0) + 1;
-        }
-        if (results != null) {
-            results.close();
-        }
+        long id = dao.getNextKeyNumber();
         ImageEntry imageEntry = new ImageEntry(id, title, url, date, hdUrl, explanation, newImage);
-        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-        byte[] bytes = null;
-        try {
-            ObjectOutputStream objOut = new ObjectOutputStream(bytesOut);
-            objOut.writeObject(imageEntry);
-            objOut.flush();
-            objOut.close();
-            bytes = bytesOut.toByteArray();
-            bytesOut.flush();
-            bytesOut.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        newRow.put(ImageDbOpener.COL_IMAGEENTRY_OBJECT, bytes);
-        wrap.getImageDb(true).insert(ImageDbOpener.TABLE_NAME, null, newRow);
-        wrap.setImages(imageEntry);
+        dao.createEntry(imageEntry);
+        ImageInfoWrapper.setImages(imageEntry);
 
     }
 

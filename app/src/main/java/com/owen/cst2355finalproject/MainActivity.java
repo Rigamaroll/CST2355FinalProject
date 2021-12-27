@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences saveLogin = null;
     SharedPreferences passFile = null;
     private LoginCredentials login;
+    ApplicationDAO dao;
 
     /**
      * when the Activity is created it checks if this is the first time using the app and gives a toast message
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
                     "Entering your email and password will setup the app with your personal information", Toast.LENGTH_LONG);
             newUser.show();
         }
-
+        dao = new ApplicationDAO(this);
         saveLogin = getSharedPreferences("login", Context.MODE_PRIVATE);
         passFile = getSharedPreferences("passFile", Context.MODE_PRIVATE);
         loadSharedPrefs();

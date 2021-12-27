@@ -23,7 +23,7 @@ import java.io.IOException;
 public class ViewAllImage extends MainToolBar {
 
     private ImageListAdapter imageAdapter;
-    private ImageInfoWrapper wrap;
+    private ApplicationDAO dao;
 
     /**
      * Initializes the Toolbar, NavigationDrawer, and NavigationView, then initializes
@@ -37,7 +37,7 @@ public class ViewAllImage extends MainToolBar {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_image);
-        wrap = new ImageInfoWrapper(this);
+        dao = new ApplicationDAO(this);
         initialize();
         getToolbar().setTitle(R.string.viewAllImageTitle);
 
@@ -70,7 +70,7 @@ public class ViewAllImage extends MainToolBar {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setTitle("Do you want to delete this?")
 
-                    .setMessage("The selected image is: " + wrap.getImages(pos).getTitle() + "\n" + "The database id is: " + id)
+                    .setMessage("The selected image is: " + ImageInfoWrapper.getImages(pos).getTitle() + "\n" + "The database id is: " + id)
 
                     .setPositiveButton("Yes", (click, arg) -> {
 
@@ -80,10 +80,8 @@ public class ViewAllImage extends MainToolBar {
                             getSupportFragmentManager().beginTransaction().remove(imageFrag).commit();
 
                         }
-
-                        wrap.getImageDb(true).delete(ImageDbOpener.TABLE_NAME, ImageDbOpener.COL_ID + " = ?",
-                                new String[]{String.valueOf(id)});
-                        wrap.deleteImages(pos);
+                        dao.deleteEntry(id);
+                        ImageInfoWrapper.deleteImages(pos);
                         imageAdapter.notifyDataSetChanged();
 
                     })
@@ -106,7 +104,7 @@ public class ViewAllImage extends MainToolBar {
     private Bundle getFragData(int pos) {
 
         Bundle fragData = new Bundle();
-        fragData.putSerializable("imageEntry", wrap.getImages(pos));
+        fragData.putSerializable("imageEntry", ImageInfoWrapper.getImages(pos));
         return fragData;
     }
 
@@ -117,12 +115,12 @@ public class ViewAllImage extends MainToolBar {
 
         public int getCount() {
 
-            return wrap.listSize();
+            return ImageInfoWrapper.listSize();
         }
 
         public ImageEntry getItem(int position) {
 
-            return wrap.getImages(position);
+            return ImageInfoWrapper.getImages(position);
         }
 
         public long getItemId(int position) {
@@ -142,7 +140,7 @@ public class ViewAllImage extends MainToolBar {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             LayoutInflater inflater = getLayoutInflater();
-            ImageEntry imageFile = wrap.getImages(position);
+            ImageEntry imageFile = ImageInfoWrapper.getImages(position);
 
             View view = inflater.inflate(R.layout.image_list, parent, false);
 

@@ -13,7 +13,6 @@ import android.widget.Toast;
 public class Dashboard extends MainToolBar {
 
     private static String lastLogin;
-    ImageInfoWrapper wrap;
     private final String DEFAULT_API_KEY = "DgPLcIlnmN0Cwrzcg3e9NraFaYLIDI68Ysc6Zh3d";
 
     /**
@@ -29,17 +28,15 @@ public class Dashboard extends MainToolBar {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-
         if (!(getIntent().getStringExtra("lastLogin") == null)) {
             lastLogin = getIntent().getStringExtra("lastLogin");
         }
-        wrap = new ImageInfoWrapper(this);
 
         initialize();
         getToolbar().setTitle(R.string.dashBoardTitle);
 
         TextView totalPhotos = findViewById(R.id.totalPhotos);
-        totalPhotos.append(String.valueOf(wrap.listSize()));
+        totalPhotos.append(String.valueOf(ImageInfoWrapper.listSize()));
         TextView lastLog = findViewById(R.id.lastLogin);
         lastLog.append(lastLogin == null ? "" : lastLogin);
 
