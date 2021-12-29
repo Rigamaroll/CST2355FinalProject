@@ -95,9 +95,10 @@ public class SearchImage extends MainToolBar {
                 Snackbar.make(imageTitle, getString(R.string.haveImage), Snackbar.LENGTH_LONG)
                         .setBackgroundTint(getColor(R.color.teal_700))
                         .show();
-                return;
-            }
+
+            } else {
                 addToDB();
+            }
         });
     }
 
@@ -140,7 +141,6 @@ public class SearchImage extends MainToolBar {
      * It creates the ImageEntryObject then serializes it to a byte array, and puts it in the database
      * as a blob, and it adds the entry to the in memory ArrayList for current viewing.
      *
-     * @throws MalformedURLException
      */
 
     private void addToDB() {
@@ -181,6 +181,7 @@ public class SearchImage extends MainToolBar {
         public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int day) {
 
             ExecutorService getImageThreadPool = Executors.newSingleThreadExecutor();
+
             Calendar cal = Calendar.getInstance();
             cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
             Calendar earliest = Calendar.getInstance();
@@ -227,11 +228,11 @@ public class SearchImage extends MainToolBar {
         TextView imageExplanation = findViewById(R.id.searchImageExplanation);
         ImageView newImage = findViewById(R.id.searchImageView);
 
-        imageTitle.append(entry.getTitle());
-        imageDate.append(entry.getDate());
-        imageUrl.append(entry.getUrl());
-        imageHDUrl.append(entry.getHdURL());
-        imageExplanation.append(entry.getExplanation());
+        imageTitle.setText(entry.getTitle());
+        imageDate.setText(entry.getDate());
+        imageUrl.setText(entry.getUrl());
+        imageHDUrl.setText(entry.getHdURL());
+        imageExplanation.setText(entry.getExplanation());
         newImage.setImageBitmap(entry.getImageFile());
         Button save = findViewById(R.id.saveImageButton);
         save.setVisibility(View.VISIBLE);
