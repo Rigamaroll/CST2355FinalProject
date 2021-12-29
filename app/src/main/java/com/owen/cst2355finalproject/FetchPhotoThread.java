@@ -37,13 +37,12 @@ public class FetchPhotoThread implements Callable<ImageEntry> {
         String title = null;
         String url = null;
         String hdUrl = null;
-        String mediaType = null;
         Bitmap image = null;
 
         try {
 
             JSONObject jObject = getImageInfo(this.url);
-            mediaType = jObject.getString("media_type");
+            String mediaType = jObject.getString("media_type");
 
             if (mediaType == null || !mediaType.contentEquals("image")) {
 

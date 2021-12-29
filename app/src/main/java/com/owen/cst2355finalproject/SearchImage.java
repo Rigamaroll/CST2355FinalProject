@@ -134,7 +134,6 @@ public class SearchImage extends MainToolBar {
         saveToast.show();
     }
 
-
     /**
      * Returns a new DatePickerDialog
      * @param listen the Listener object
@@ -147,58 +146,25 @@ public class SearchImage extends MainToolBar {
                 cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
     }
 
-    /**
-     * Listener for the DatePicker
-     */
-    private class DatePickerListener implements DatePickerDialog.OnDateSetListener {
+    private void getNewImageEntry(String newDate) {
+        ExecutorService getImageThreadPool = Executors.newSingleThreadExecutor();
 
-        /**
-         * Sets what happens when a date is chosen in the date dialog.
-         *
-         * @param datePicker
-         * @param year
-         * @param month
-         * @param day
-         */
-        @Override
-        public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int day) {
+        Future<ImageEntry> result = getImageThreadPool.submit(new FetchPhotoThread("https://api.nasa.gov/planetary/apod?api_key="
+                + getSharedPreferences("apiKey", MODE_PRIVATE).getString("key", "")
+                + "&date=" + newDate, dao.getNextKeyNumber()));
 
-            ExecutorService getImageThreadPool = Executors.newSingleThreadExecutor();
+        try {
+            ImageEntry entry = result.get();
+            if (entry == null) {
 
-            Calendar cal = Calendar.getInstance();
-            cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-            Calendar earliest = Calendar.getInstance();
-            earliest.set(1995, 06, 20);
-            if (cal.after(Calendar.getInstance())) {
+                alertDate("video");
 
-                alertDate("future");
-
-            } else if (cal.before(earliest)) {
-
-                alertDate("past");
             } else {
-
-                DateFormat imageDate = new SimpleDateFormat("yyyy-MM-dd");
-                String newDate = imageDate.format(cal.getTime());
-
-                Future<ImageEntry> result = getImageThreadPool.submit(new FetchPhotoThread("https://api.nasa.gov/planetary/apod?api_key="
-                        + getSharedPreferences("apiKey", MODE_PRIVATE).getString("key", "")
-                        + "&date=" + newDate, dao.getNextKeyNumber()));
-
-                try {
-                    ImageEntry entry = result.get();
-                    if (entry == null) {
-
-                        alertDate("video");
-
-                    } else {
-                        newImage = entry;
-                        setScreen(entry);
-                    }
-                } catch (ExecutionException | InterruptedException | IOException e) {
-                    e.printStackTrace();
-                }
+                newImage = entry;
+                setScreen(entry);
             }
+        } catch (ExecutionException | InterruptedException | IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -219,5 +185,41 @@ public class SearchImage extends MainToolBar {
         newImage.setImageBitmap(entry.getImageFile());
         Button save = findViewById(R.id.saveImageButton);
         save.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Listener for the DatePicker
+     */
+    private class DatePickerListener implements DatePickerDialog.OnDateSetListener {
+
+        /**
+         * Sets what happens when a date is chosen in the date dialog.
+         *
+         * @param datePicker
+         * @param year
+         * @param month
+         * @param day
+         */
+        @Override
+        public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int day) {
+
+            Calendar cal = Calendar.getInstance();
+            cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+            Calendar earliest = Calendar.getInstance();
+            earliest.set(1995, 05, 20);
+            if (cal.after(Calendar.getInstance())) {
+
+                alertDate("future");
+
+            } else if (cal.before(earliest)) {
+
+                alertDate("past");
+            } else {
+
+                DateFormat imageDate = new SimpleDateFormat("yyyy-MM-dd");
+                String newDate = imageDate.format(cal.getTime());
+                getNewImageEntry(newDate);
+            }
+        }
     }
 }
