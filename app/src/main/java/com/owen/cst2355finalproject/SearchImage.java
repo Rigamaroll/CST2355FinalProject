@@ -89,10 +89,10 @@ public class SearchImage extends MainToolBar {
         });
 
         saveImage.setOnClickListener((click) -> {
-
+            TextView imageTitle = findViewById(R.id.searchImageName);
             if (ImageInfoWrapper.exists(newImage.getDate())) {
 
-                Snackbar.make(, getString(R.string.haveImage), Snackbar.LENGTH_LONG)
+                Snackbar.make(imageTitle, getString(R.string.haveImage), Snackbar.LENGTH_LONG)
                         .setBackgroundTint(getColor(R.color.teal_700))
                         .show();
                 return;
