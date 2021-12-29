@@ -97,5 +97,6 @@
     <string name="no">Non</string>
     <string name="ok">OK</string>
     <string name="helpAlert">d\'Aide</string>
+    <string name="haveImage">Vous avez déjà l\'image de cette date</string>
 
 </resources>

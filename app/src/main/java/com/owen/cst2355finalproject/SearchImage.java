@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,6 +34,12 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Class which is for searching the new images.  Contains a DatePickerDialog and Async
@@ -43,6 +50,7 @@ public class SearchImage extends MainToolBar {
 
     DatePickerDialog datePicker;
     ApplicationDAO dao;
+    ImageEntry newImage;
 
     /**
      * creation method for the activitu which sets the ImageInfoWrapper containing
@@ -82,11 +90,14 @@ public class SearchImage extends MainToolBar {
 
         saveImage.setOnClickListener((click) -> {
 
-            try {
-                addToDB();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
+            if (ImageInfoWrapper.exists(newImage.getDate())) {
+
+                Snackbar.make(, getString(R.string.haveImage), Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(getColor(R.color.teal_700))
+                        .show();
+                return;
             }
+                addToDB();
         });
     }
 
@@ -95,7 +106,7 @@ public class SearchImage extends MainToolBar {
      * @param reason reason for this dialog being created
      */
 
-    private void alertDate(String reason) {
+    protected void alertDate(String reason) {
         String alertString = null;
         switch (reason) {
             case "past":
@@ -132,37 +143,10 @@ public class SearchImage extends MainToolBar {
      * @throws MalformedURLException
      */
 
-    private void addToDB() throws MalformedURLException {
+    private void addToDB() {
 
-        TextView imageTitle = findViewById(R.id.searchImageName);
-        TextView imageDate = findViewById(R.id.searchImageDate);
-        TextView imageUrl = findViewById(R.id.searchImageURL);
-        TextView imageHDUrl = findViewById(R.id.searchImageHdURL);
-        TextView imageExplanation = findViewById(R.id.searchImageExplanation);
-        ImageView imageImage = findViewById(R.id.searchImageView);
-
-        String title = String.valueOf(imageTitle.getText());
-        String date = String.valueOf(imageDate.getText());
-
-        if (ImageInfoWrapper.exists(date)) {
-
-            String snackString = "You already have that date's image";
-            Snackbar.make(imageTitle, snackString, Snackbar.LENGTH_LONG)
-                    .setBackgroundTint(getColor(R.color.teal_700))
-                    .show();
-            return;
-        }
-
-        String url = String.valueOf(imageUrl.getText());
-        String hdUrl = String.valueOf(imageHDUrl.getText());
-        String explanation = String.valueOf(imageExplanation.getText());
-        BitmapDrawable theImage = (BitmapDrawable) imageImage.getDrawable();
-        Bitmap newImage = theImage.getBitmap();
-
-        long id = dao.getNextKeyNumber();
-        ImageEntry imageEntry = new ImageEntry(id, title, url, date, hdUrl, explanation, newImage);
-        dao.createEntry(imageEntry);
-        ImageInfoWrapper.setImages(imageEntry);
+        dao.createEntry(newImage);
+        ImageInfoWrapper.setImages(newImage);
         Toast saveToast = Toast.makeText(this, R.string.saveToast, Toast.LENGTH_LONG);
         saveToast.show();
     }
@@ -196,6 +180,7 @@ public class SearchImage extends MainToolBar {
         @Override
         public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int day) {
 
+            ExecutorService getImageThreadPool = Executors.newSingleThreadExecutor();
             Calendar cal = Calendar.getInstance();
             cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
             Calendar earliest = Calendar.getInstance();
@@ -211,163 +196,44 @@ public class SearchImage extends MainToolBar {
 
                 DateFormat imageDate = new SimpleDateFormat("yyyy-MM-dd");
                 String newDate = imageDate.format(cal.getTime());
-                ImageQuery request = new ImageQuery();
-                request.execute("https://api.nasa.gov/planetary/apod?api_key="
+
+                Future<ImageEntry> result = getImageThreadPool.submit(new FetchPhotoThread("https://api.nasa.gov/planetary/apod?api_key="
                         + getSharedPreferences("apiKey", MODE_PRIVATE).getString("key", "")
-                        + "&date=" + newDate);
-            }
-        }
-    }
+                        + "&date=" + newDate, dao.getNextKeyNumber()));
 
-    /**
-     * The AsyncTask for querying the new images
-     */
-    private class ImageQuery extends AsyncTask<String, Integer, String> {
+                try {
+                    ImageEntry entry = result.get();
+                    if (entry == null) {
 
-        String title;
-        String date;
-        String url;
-        String hdUrl;
-        String explanation;
-        String mediaType;
-        Bitmap theImage;
+                        alertDate("video");
 
-        /**
-         * gets a new HttpURLConnection
-         */
-        private HttpURLConnection getConnection(String location) throws IOException {
-
-            URL url = new URL(location);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            return urlConnection;
-        }
-
-        /**
-         * calls each appropriate method to get the image information for displaying
-         */
-        @Override
-        protected String doInBackground(String... args) {
-
-            try {
-                getImageData(getImageInfo(args[0]));
-                publishProgress(100);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-            }
-            return null;
-        }
-
-        /**
-         * looks after the ProgressBar
-         * @param values
-         */
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-
-            ProgressBar imageProgress = findViewById(R.id.downloadProgress);
-            imageProgress.setVisibility(View.VISIBLE);
-            imageProgress.setProgress(values[0]);
-            super.onProgressUpdate(values);
-        }
-
-        /**
-         * Determines what happens after the Async is completed.  This will set the ImageView and TextViews
-         * for the page, so they can be displayed with the downloaded information.
-         * @param s
-         */
-
-        @Override
-        protected void onPostExecute(String s) {
-
-            ProgressBar imageProgress = findViewById(R.id.downloadProgress);
-
-            if (this.mediaType == null || !this.mediaType.contentEquals("image")) {
-
-                alertDate("video");
-                imageProgress.setVisibility(View.INVISIBLE);
-                imageProgress.setProgress(0);
-                return;
-            }
-
-            TextView imageTitle = findViewById(R.id.searchImageName);
-            TextView imageDate = findViewById(R.id.searchImageDate);
-            TextView imageUrl = findViewById(R.id.searchImageURL);
-            TextView imageHDUrl = findViewById(R.id.searchImageHdURL);
-            TextView imageExplanation = findViewById(R.id.searchImageExplanation);
-            ImageView newImage = findViewById(R.id.searchImageView);
-            //TextView searchTitle = findViewById(R.id.searchImageTitle);
-
-            imageTitle.setText(this.title);
-            imageHDUrl.setText(this.hdUrl);
-            Button save = findViewById(R.id.saveImageButton);
-            save.setVisibility(View.VISIBLE);
-            //searchTitle.setText(R.string.searchImageResult);
-            imageDate.setText(this.date);
-            imageUrl.setText(this.url);
-            imageExplanation.setText(this.explanation);
-            newImage.setImageBitmap(this.theImage);
-            imageProgress.setVisibility(View.INVISIBLE);
-            super.onPostExecute(s);
-        }
-
-        /**
-         * Downloads the image from the URL provided.
-         * @param imageURL the location of the image
-         * @throws IOException
-         */
-
-        private void getImageData(String imageURL) throws IOException {
-
-            Bitmap image = null;
-            HttpURLConnection urlConnection = getConnection(imageURL);
-
-            int responseCode = urlConnection.getResponseCode();
-            if (responseCode == 200) {
-
-                image = BitmapFactory.decodeStream(urlConnection.getInputStream());
-            }
-
-            this.theImage = image;
-        }
-
-        /**
-         * Downloads the JSON object containing the information about the image and its location.
-         * It then sets the instance variables with the appropriate JSON fields.
-         * @param imageURL location of the JSON object for the image information
-         * @return
-         * @throws IOException
-         * @throws JSONException
-         */
-
-        private String getImageInfo(String imageURL) throws IOException, JSONException {
-
-            HttpURLConnection urlConnection = getConnection(imageURL);
-
-            int responseCode = urlConnection.getResponseCode();
-            if (responseCode == 200) {
-                InputStream inputStream = new URL(imageURL).openStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
+                    } else {
+                        newImage = entry;
+                        setScreen(entry);
+                    }
+                } catch (ExecutionException | InterruptedException | IOException e) {
+                    e.printStackTrace();
                 }
-                String result = sb.toString();
-                inputStream.close();
-                JSONObject jObject = new JSONObject(result);
-                this.explanation = jObject.getString("explanation");
-                this.date = jObject.getString("date");
-                publishProgress(20);
-                this.title = jObject.getString("title");
-                publishProgress(40);
-                this.url = jObject.getString("url");
-                publishProgress(60);
-                this.hdUrl = jObject.getString("hdurl");
-                publishProgress(80);
-                this.mediaType = jObject.getString("media_type");
             }
-            return this.url;
         }
     }
 
+    private void setScreen(ImageEntry entry) throws IOException {
+
+        TextView imageTitle = findViewById(R.id.searchImageName);
+        TextView imageDate = findViewById(R.id.searchImageDate);
+        TextView imageUrl = findViewById(R.id.searchImageURL);
+        TextView imageHDUrl = findViewById(R.id.searchImageHdURL);
+        TextView imageExplanation = findViewById(R.id.searchImageExplanation);
+        ImageView newImage = findViewById(R.id.searchImageView);
+
+        imageTitle.append(entry.getTitle());
+        imageDate.append(entry.getDate());
+        imageUrl.append(entry.getUrl());
+        imageHDUrl.append(entry.getHdURL());
+        imageExplanation.append(entry.getExplanation());
+        newImage.setImageBitmap(entry.getImageFile());
+        Button save = findViewById(R.id.saveImageButton);
+        save.setVisibility(View.VISIBLE);
+    }
 }
