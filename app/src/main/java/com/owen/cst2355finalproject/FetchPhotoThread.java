@@ -25,6 +25,7 @@ public class FetchPhotoThread implements Callable<ImageEntry> {
         this.id = id;
 
     }
+
     /**
      * calls each appropriate method to get the image information for displaying
      */
@@ -56,7 +57,7 @@ public class FetchPhotoThread implements Callable<ImageEntry> {
             hdUrl = jObject.getString("hdurl");
             image = getImageData(url);
 
-        }catch (IOException | JSONException e) {
+        } catch (IOException | JSONException e) {
 
             e.printStackTrace();
 
@@ -78,6 +79,7 @@ public class FetchPhotoThread implements Callable<ImageEntry> {
 
     /**
      * Downloads the image from the URL provided.
+     *
      * @param imageURL the location of the image
      * @throws IOException
      */
@@ -99,6 +101,7 @@ public class FetchPhotoThread implements Callable<ImageEntry> {
     /**
      * Downloads the JSON object containing the information about the image and its location.
      * It then sets the instance variables with the appropriate JSON fields.
+     *
      * @param imageURL location of the JSON object for the image information
      * @return
      * @throws IOException

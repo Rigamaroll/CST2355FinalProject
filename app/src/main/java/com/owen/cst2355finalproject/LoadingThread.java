@@ -7,7 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-public class LoadingThread extends Thread{
+public class LoadingThread extends Thread {
 
     private SQLiteDatabase database;
 

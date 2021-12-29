@@ -13,7 +13,7 @@ public class DeleterThread extends Thread {
         this.id = id;
     }
 
-    public void run () {
+    public void run() {
 
         database.delete(ImageDbOpener.TABLE_NAME, ImageDbOpener.COL_ID + " = ?", new String[]{String.valueOf(id)});
         database.close();

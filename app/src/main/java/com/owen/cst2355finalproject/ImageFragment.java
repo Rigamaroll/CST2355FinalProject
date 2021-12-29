@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -23,9 +22,6 @@ import java.io.IOException;
 
 public class ImageFragment extends Fragment {
 
-    private Bundle activityData;
-    private AppCompatActivity parentActivity;
-
     /**
      * Inflates the layout for the fragment, and sets the parameters for the boxes.
      *
@@ -38,7 +34,7 @@ public class ImageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        activityData = getArguments();
+        Bundle activityData = getArguments();
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_image, container, false);
@@ -75,7 +71,6 @@ public class ImageFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        parentActivity = (AppCompatActivity) context;
     }
 
     /**

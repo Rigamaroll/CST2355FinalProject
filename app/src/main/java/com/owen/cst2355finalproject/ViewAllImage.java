@@ -73,6 +73,7 @@ public class ViewAllImage extends MainToolBar {
 
     /**
      * Sets the fragments for the ImageEntry by first determining which layout is being run.
+     *
      * @param pos the index number in the CopyOnWriteArrayList storing the ImageEntry objects
      */
 
@@ -99,10 +100,11 @@ public class ViewAllImage extends MainToolBar {
 
     /**
      * Creates the AlertDialog to decide if delete the item or not.
-     * @param id database id number for finding row to delete
+     *
+     * @param id  database id number for finding row to delete
      * @param pos the index number in the CopyOnWriteArrayList storing the ImageEntry objects
      */
-    private void deleteListItem (long id, int pos) {
+    private void deleteListItem(long id, int pos) {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("Do you want to delete this?")

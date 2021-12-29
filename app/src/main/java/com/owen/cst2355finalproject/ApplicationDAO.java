@@ -8,7 +8,7 @@ public class ApplicationDAO {
 
     private ImageDbOpener dbOpener;
 
-    public ApplicationDAO (Context context) {
+    public ApplicationDAO(Context context) {
 
         dbOpener = new ImageDbOpener(context);
         if (ImageInfoWrapper.listSize() == 0) {
@@ -35,10 +35,10 @@ public class ApplicationDAO {
             results.close();
         }
 
-       return id;
+        return id;
     }
 
-    public void createEntry (ImageEntry imageEntry) {
+    public void createEntry(ImageEntry imageEntry) {
 
         new CreationThread(getImageDb(true), imageEntry).start();
     }
