@@ -4,6 +4,8 @@ import androidx.appcompat.app.AlertDialog;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -14,15 +16,21 @@ import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Class which is for searching the new images.  Contains a DatePickerDialog and Async
@@ -36,7 +44,7 @@ public class SearchImage extends MainToolBar {
     ImageEntry newImage;
 
     /**
-     * creation method for the activitu which sets the ImageInfoWrapper containing
+     * creation method for the activity which sets the ImageInfoWrapper containing
      * the necessary image info the app.  It then sets up the Toolbar, the DatePicker, and lets
      * clicking on the HdURL go to the browser to see the HD image.
      *
@@ -137,7 +145,7 @@ public class SearchImage extends MainToolBar {
     /**
      * Returns a new DatePickerDialog
      * @param listen the Listener object
-     * @return
+     * @return new DatePickerDialog
      */
     private DatePickerDialog getDatePickerDialog(DatePickerDialog.OnDateSetListener listen) {
 
@@ -149,23 +157,9 @@ public class SearchImage extends MainToolBar {
     private void getNewImageEntry(String newDate) {
         ExecutorService getImageThreadPool = Executors.newSingleThreadExecutor();
 
-        Future<ImageEntry> result = getImageThreadPool.submit(new FetchPhotoThread("https://api.nasa.gov/planetary/apod?api_key="
+        getImageThreadPool.execute(new FetchPhotoThread("https://api.nasa.gov/planetary/apod?api_key="
                 + getSharedPreferences("apiKey", MODE_PRIVATE).getString("key", "")
                 + "&date=" + newDate, dao.getNextKeyNumber()));
-
-        try {
-            ImageEntry entry = result.get();
-            if (entry == null) {
-
-                alertDate("video");
-
-            } else {
-                newImage = entry;
-                setScreen(entry);
-            }
-        } catch (ExecutionException | InterruptedException | IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void setScreen(ImageEntry entry) throws IOException {
@@ -195,7 +189,7 @@ public class SearchImage extends MainToolBar {
         /**
          * Sets what happens when a date is chosen in the date dialog.
          *
-         * @param datePicker
+         * @param datePicker DatePicker Object
          * @param year
          * @param month
          * @param day
@@ -206,7 +200,7 @@ public class SearchImage extends MainToolBar {
             Calendar cal = Calendar.getInstance();
             cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
             Calendar earliest = Calendar.getInstance();
-            earliest.set(1995, 05, 20);
+            earliest.set(1995, Calendar.JUNE, 20);
             if (cal.after(Calendar.getInstance())) {
 
                 alertDate("future");
@@ -221,5 +215,127 @@ public class SearchImage extends MainToolBar {
                 getNewImageEntry(newDate);
             }
         }
+    }
+
+    private class FetchPhotoThread implements Runnable {
+
+        String url;
+        long id;
+
+        public FetchPhotoThread(String url, long id) {
+
+            this.url = url;
+            this.id = id;
+
+        }
+
+        /**
+         * calls each appropriate method to get the image information for displaying
+         */
+        @Override
+        public void run() {
+
+            try {
+
+                JSONObject jObject = getImageInfo(this.url);
+                String mediaType = jObject.getString("media_type");
+
+                if (mediaType == null || !mediaType.contentEquals("image")) {
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            alertDate("video");
+                        }
+                    });
+
+                } else {
+
+                    String explanation = jObject.getString("explanation");
+                    String date = jObject.getString("date");
+                    String title = jObject.getString("title");
+                    String url = jObject.getString("url");
+                    String hdUrl = jObject.getString("hdurl");
+                    Bitmap image = getImageData(url);
+
+                    newImage = new ImageEntry(id, title, url, date, hdUrl, explanation, image);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                setScreen(newImage);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            } catch (IOException | JSONException e) {
+
+                e.printStackTrace();
+            }
+        }
+
+        /**
+         * gets a new HttpURLConnection
+         */
+        private HttpURLConnection getConnection(String location) throws IOException {
+
+            URL url = new URL(location);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            return urlConnection;
+        }
+
+        /**
+         * Downloads the image from the URL provided.
+         *
+         * @param imageURL the location of the image
+         * @throws IOException
+         */
+
+        private Bitmap getImageData(String imageURL) throws IOException {
+
+            Bitmap image = null;
+            HttpURLConnection urlConnection = getConnection(imageURL);
+
+            int responseCode = urlConnection.getResponseCode();
+            if (responseCode == 200) {
+
+                image = BitmapFactory.decodeStream(urlConnection.getInputStream());
+            }
+
+            return image;
+        }
+
+        /**
+         * Downloads the JSON object containing the information about the image and its location.
+         * It then sets the instance variables with the appropriate JSON fields.
+         *
+         * @param imageURL location of the JSON object for the image information
+         * @return
+         * @throws IOException
+         * @throws JSONException
+         */
+
+        private JSONObject getImageInfo(String imageURL) throws IOException, JSONException {
+
+            HttpURLConnection urlConnection = getConnection(imageURL);
+            JSONObject jObject = null;
+            int responseCode = urlConnection.getResponseCode();
+            if (responseCode == 200) {
+                InputStream inputStream = new URL(imageURL).openStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                String result = sb.toString();
+                inputStream.close();
+                jObject = new JSONObject(result);
+            }
+            return jObject;
+        }
+
     }
 }
