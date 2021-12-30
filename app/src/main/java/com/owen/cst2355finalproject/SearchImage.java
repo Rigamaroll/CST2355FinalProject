@@ -42,6 +42,7 @@ public class SearchImage extends MainToolBar {
     DatePickerDialog datePicker;
     ApplicationDAO dao;
     ImageEntry newImage;
+    ExecutorService getImageThreadPool;
 
     /**
      * creation method for the activity which sets the ImageInfoWrapper containing
@@ -57,6 +58,7 @@ public class SearchImage extends MainToolBar {
         dao = new ApplicationDAO(this);
         initialize();
         getToolbar().setTitle(R.string.searchImageTitle);
+        getImageThreadPool = Executors.newSingleThreadExecutor();
 
         Button searchDate = findViewById(R.id.searchImageButton);
         Button saveImage = findViewById(R.id.saveImageButton);
@@ -88,6 +90,7 @@ public class SearchImage extends MainToolBar {
                         .show();
 
             } else {
+
                 addToDB();
             }
         });
@@ -155,11 +158,10 @@ public class SearchImage extends MainToolBar {
     }
 
     private void getNewImageEntry(String newDate) {
-        ExecutorService getImageThreadPool = Executors.newSingleThreadExecutor();
 
         getImageThreadPool.execute(new FetchPhotoThread("https://api.nasa.gov/planetary/apod?api_key="
                 + getSharedPreferences("apiKey", MODE_PRIVATE).getString("key", "")
-                + "&date=" + newDate, dao.getNextKeyNumber()));
+                + "&date=" + newDate));
     }
 
     private void setScreen(ImageEntry entry) throws IOException {
@@ -220,12 +222,10 @@ public class SearchImage extends MainToolBar {
     private class FetchPhotoThread implements Runnable {
 
         String url;
-        long id;
 
-        public FetchPhotoThread(String url, long id) {
+        public FetchPhotoThread(String url) {
 
             this.url = url;
-            this.id = id;
 
         }
 
@@ -258,7 +258,7 @@ public class SearchImage extends MainToolBar {
                     String hdUrl = jObject.getString("hdurl");
                     Bitmap image = getImageData(url);
 
-                    newImage = new ImageEntry(id, title, url, date, hdUrl, explanation, image);
+                    newImage = new ImageEntry(dao.getNextKeyNumber(), title, url, date, hdUrl, explanation, image);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
