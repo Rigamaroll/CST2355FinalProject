@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +43,6 @@ public class SearchImage extends MainToolBar {
     DatePickerDialog datePicker;
     ApplicationDAO dao;
     ImageEntry newImage;
-    ExecutorService getImageThreadPool;
 
     /**
      * creation method for the activity which sets the ImageInfoWrapper containing
@@ -58,7 +58,6 @@ public class SearchImage extends MainToolBar {
         dao = new ApplicationDAO(this);
         initialize();
         getToolbar().setTitle(R.string.searchImageTitle);
-        getImageThreadPool = Executors.newSingleThreadExecutor();
 
         Button searchDate = findViewById(R.id.searchImageButton);
         Button saveImage = findViewById(R.id.saveImageButton);
@@ -96,12 +95,22 @@ public class SearchImage extends MainToolBar {
         });
     }
 
+    private void progressVis(ProgressBar progress, boolean isVisible) {
+
+        if (isVisible) {
+            progress.setVisibility(View.VISIBLE);
+        } else {
+            progress.setVisibility(View.INVISIBLE);
+        }
+    }
+
     /**
      * Creates an alert dialog if the date picked is not a valid date.
      * @param reason reason for this dialog being created
      */
 
     protected void alertDate(String reason) {
+
         String alertString = null;
         switch (reason) {
             case "past":
@@ -117,6 +126,9 @@ public class SearchImage extends MainToolBar {
                 break;
         }
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        progressVis(findViewById(R.id.progressId), false);
+
         alertDialogBuilder.setTitle(R.string.dateOutRange)
                 .setMessage(alertString)
                 .setPositiveButton(R.string.yes, (click, arg) -> {
@@ -126,6 +138,7 @@ public class SearchImage extends MainToolBar {
                 })
                 .create()
                 .show();
+
     }
 
     /**
@@ -158,13 +171,19 @@ public class SearchImage extends MainToolBar {
     }
 
     private void getNewImageEntry(String newDate) {
+        ExecutorService getImageThreadPool = Executors.newSingleThreadExecutor();
 
         getImageThreadPool.execute(new FetchPhotoThread("https://api.nasa.gov/planetary/apod?api_key="
                 + getSharedPreferences("apiKey", MODE_PRIVATE).getString("key", "")
                 + "&date=" + newDate));
+
+        progressVis(findViewById(R.id.progressId), true);
     }
 
     private void setScreen(ImageEntry entry) throws IOException {
+
+        ProgressBar progress = findViewById(R.id.progressId);
+        progress.setVisibility(View.INVISIBLE);
 
         TextView imageTitle = findViewById(R.id.searchImageName);
         TextView imageDate = findViewById(R.id.searchImageDate);
@@ -242,12 +261,7 @@ public class SearchImage extends MainToolBar {
 
                 if (mediaType == null || !mediaType.contentEquals("image")) {
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            alertDate("video");
-                        }
-                    });
+                    runOnUiThread(()-> alertDate("video"));
 
                 } else {
 
@@ -258,15 +272,15 @@ public class SearchImage extends MainToolBar {
                     String hdUrl = jObject.getString("hdurl");
                     Bitmap image = getImageData(url);
 
-                    newImage = new ImageEntry(dao.getNextKeyNumber(), title, url, date, hdUrl, explanation, image);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                setScreen(newImage);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                    runOnUiThread(()->{
+
+                        try {
+
+                            newImage = new ImageEntry(dao.getNextKeyNumber(), title, url, date, hdUrl, explanation, image);
+                            setScreen(newImage);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     });
                 }

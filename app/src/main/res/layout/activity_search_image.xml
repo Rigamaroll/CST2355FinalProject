@@ -31,6 +31,12 @@
         android:background="@color/white"
         android:layout_margin="2dp" />
 
+    <ProgressBar
+        android:id="@+id/progressId"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <TextView
         android:id="@+id/searchImageName"
         android:textSize="20dp"
