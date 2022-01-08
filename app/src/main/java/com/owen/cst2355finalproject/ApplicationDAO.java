@@ -26,7 +26,7 @@ public class ApplicationDAO {
 
     public synchronized long getNextKeyNumber() {
         long id = 0;
-        Cursor results = getImageDb(true).rawQuery("SELECT max(seq) FROM sqlite_sequence;", null, null);
+        Cursor results = getImageDb(false).rawQuery("SELECT max(seq) FROM sqlite_sequence;", null, null);
         while (results.moveToNext()) {
 
             id = results.getLong(0) + 1;
