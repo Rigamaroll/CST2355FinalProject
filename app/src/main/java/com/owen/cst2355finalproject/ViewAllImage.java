@@ -107,9 +107,9 @@ public class ViewAllImage extends MainToolBar {
     private void deleteListItem(long id, int pos) {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Do you want to delete this?")
+        alertDialogBuilder.setTitle(Constants.DELETE_DIALOG_TEXT)
 
-                .setMessage("The selected image is: " + ImageInfoWrapper.getImages(pos).getTitle() + "\n" + "The database id is: " + id)
+                .setMessage(String.format(Constants.DELETE_IMAGE_INFO, ImageInfoWrapper.getImages(pos).getTitle(), id))
                 .setPositiveButton("Yes", (click, arg) -> {
 
                     Fragment imageFrag = getSupportFragmentManager().findFragmentById(R.id.imageTitle);

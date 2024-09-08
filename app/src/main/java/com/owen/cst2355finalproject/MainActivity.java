@@ -15,8 +15,11 @@ import android.widget.Toast;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-    SharedPreferences saveLogin = null;
-    SharedPreferences passFile = null;
+
+    private static final String NEW_USER_TOAST_MESSAGE = "You haven't used the app yet.  " +
+            "Entering your email and password will setup the app with your personal information";
+    private SharedPreferences saveLogin = null;
+    private SharedPreferences passFile = null;
     private LoginCredentials login;
     ApplicationDAO dao;
 
@@ -31,26 +34,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if ((getSharedPreferences("login", Context.MODE_PRIVATE).getString("loginEmail", "").contentEquals(""))) {
-            Toast newUser = Toast.makeText(this, "You haven't used the app yet.  " +
-                    "Entering your email and password will setup the app with your personal information", Toast.LENGTH_LONG);
-            newUser.show();
+        if ((getSharedPreferences(Constants.LOGIN_SHARED_PREF_NAME, Context.MODE_PRIVATE)
+                .getString(Constants.LOGIN_EMAIL_STRING, "")
+                .contentEquals(""))) {
+            Toast.makeText(this, NEW_USER_TOAST_MESSAGE, Toast.LENGTH_LONG).show();
         }
         dao = new ApplicationDAO(this);
-        saveLogin = getSharedPreferences("login", Context.MODE_PRIVATE);
-        passFile = getSharedPreferences("passFile", Context.MODE_PRIVATE);
+        saveLogin = getSharedPreferences(Constants.LOGIN_SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        passFile = getSharedPreferences(Constants.PASS_FILE_SHARED_PREF_NAME, Context.MODE_PRIVATE);
         loadSharedPrefs();
-        EditText inputEmail = findViewById(R.id.enterEmail);
-        EditText inputPass = findViewById(R.id.enterPassword);
-        Button helpButton = findViewById(R.id.helpLoginButton);
+        final EditText inputEmail = findViewById(R.id.enterEmail);
+        final EditText inputPass = findViewById(R.id.enterPassword);
+        final Button helpButton = findViewById(R.id.helpLoginButton);
 
         helpButton.setOnClickListener((click) -> {
 
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setTitle(R.string.helpAlert)
                     .setMessage(getString(R.string.helpLogin))
                     .setPositiveButton(R.string.ok, (clicker, arg) -> {
-
                     })
                     .create()
                     .show();
@@ -58,15 +60,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if (savedInstanceState == null) {
-
             inputEmail.setText(login.getEmail());
             inputPass.setText(login.getPass());
-
         }
-
         final Button loginButton = findViewById(R.id.loginButton);
         loginButton.setOnClickListener((click) -> authenticate(inputEmail, inputPass));
-
     }
 
     /**
@@ -80,22 +78,18 @@ public class MainActivity extends AppCompatActivity {
     private void authenticate(EditText email, EditText pass) {
 
         Intent dashboard = new Intent(this, Dashboard.class);
-        String lastLogin = saveLogin.getString("lastLogin", null);
-        dashboard.putExtra("lastLogin", lastLogin);
+        String lastLogin = saveLogin.getString(Constants.LAST_LOGIN_STRING, null);
+        dashboard.putExtra(Constants.LAST_LOGIN_STRING, lastLogin);
 
-        if (passFile.getString("password", "").contentEquals("")) {
+        if (passFile.getString(Constants.PASSWORD_STRING, "").contentEquals("")) {
 
             setNewPassword(pass);
             setPrefs(email, pass);
             startActivity(dashboard);
 
-        } else if (!pass.getText().toString().contentEquals(passFile.getString("password", ""))) {
-
-            Toast wrongPass = Toast.makeText(this, "Your password is incorrect.  Please try again!", Toast.LENGTH_LONG);
-            wrongPass.show();
-
+        } else if (!pass.getText().toString().contentEquals(passFile.getString(Constants.PASSWORD_STRING, ""))) {
+            Toast.makeText(this, Constants.INCORRECT_PASSWORD_STRING, Toast.LENGTH_LONG).show();
         } else {
-
             setPrefs(email, pass);
             startActivity(dashboard);
         }
@@ -116,16 +110,16 @@ public class MainActivity extends AppCompatActivity {
 
         if (savePass.isChecked()) {
 
-            edit.putString("loginEmail", log.getEmail());
-            edit.putString("loginPass", log.getPass());
+            edit.putString(Constants.LOGIN_EMAIL_STRING, log.getEmail());
+            edit.putString(Constants.LOGIN_PASS_STRING, log.getPass());
 
         } else {
 
-            edit.putString("loginEmail", log.getEmail());
-            edit.putString("loginPass", "");
+            edit.putString(Constants.LOGIN_EMAIL_STRING, log.getEmail());
+            edit.putString(Constants.LOGIN_PASS_STRING, "");
 
         }
-        edit.putString("lastLogin", new Date().toString());
+        edit.putString(Constants.LAST_LOGIN_STRING, new Date().toString());
         edit.commit();
     }
 
@@ -154,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
     private void setNewPassword(EditText newPass) {
 
         SharedPreferences.Editor edit = passFile.edit();
-        edit.putString("password", newPass.getText().toString());
+        edit.putString(Constants.PASSWORD_STRING, newPass.getText().toString());
         edit.commit();
     }
 
@@ -164,38 +158,33 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void loadSharedPrefs() {
-
-        this.login = new LoginCredentials(saveLogin.getString("loginEmail", ""), saveLogin.getString("loginPass", ""));
-
+        this.login = new LoginCredentials(
+                saveLogin.getString(Constants.LOGIN_EMAIL_STRING, ""),
+                saveLogin.getString(Constants.LOGIN_PASS_STRING, ""));
     }
 
     /**
      * private class for the login page that holds the login credentials
      */
-
     private class LoginCredentials {
 
         private String email;
         private String pass;
 
         protected LoginCredentials(String email) {
-
             this(email, "");
         }
 
         protected LoginCredentials(String email, String pass) {
-
             this.email = email;
             this.pass = pass;
         }
 
         protected String getEmail() {
-
             return this.email;
         }
 
         protected String getPass() {
-
             return this.pass;
         }
 
@@ -204,7 +193,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void setPass(String pass) {
-
             this.pass = pass;
         }
     }

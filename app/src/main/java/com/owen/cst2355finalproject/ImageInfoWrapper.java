@@ -1,5 +1,7 @@
 package com.owen.cst2355finalproject;
 
+import java.util.Comparator;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -10,24 +12,21 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ImageInfoWrapper {
 
-    private static CopyOnWriteArrayList<ImageEntry> images = new CopyOnWriteArrayList<ImageEntry>();
+    private final static CopyOnWriteArrayList<ImageEntry> images = new CopyOnWriteArrayList<ImageEntry>();
+    private final static ConcurrentSkipListSet<ImageEntry> images2 = new ConcurrentSkipListSet<>();
 
     public static ImageEntry getImages(int position) {
         return images.get(position);
     }
-
     public static void setImages(ImageEntry image) {
-
         images.add(image);
     }
 
     public static void deleteImages(int position) {
-
         images.remove(position);
     }
 
     public static int listSize() {
-
         return images.size();
     }
 
@@ -41,9 +40,7 @@ public class ImageInfoWrapper {
     public static boolean exists(String imageDate) {
 
         for (ImageEntry dates : images) {
-
             if (dates.getDate().contentEquals(imageDate)) {
-
                 return true;
             }
         }

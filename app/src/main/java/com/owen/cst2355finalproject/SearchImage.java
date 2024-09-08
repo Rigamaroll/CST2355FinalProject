@@ -39,10 +39,10 @@ import java.util.concurrent.Executors;
  */
 
 public class SearchImage extends MainToolBar {
-
-    DatePickerDialog datePicker;
-    ApplicationDAO dao;
-    ImageEntry newImage;
+    private static final ExecutorService GET_IMAGE_THREAD_POOL = Executors.newSingleThreadExecutor();
+    private DatePickerDialog datePicker;
+    private ApplicationDAO dao;
+    private ImageEntry newImage;
 
     /**
      * creation method for the activity which sets the ImageInfoWrapper containing
@@ -57,46 +57,41 @@ public class SearchImage extends MainToolBar {
         setContentView(R.layout.activity_search_image);
         dao = new ApplicationDAO(this);
         initialize();
-        getToolbar().setTitle(R.string.searchImageTitle);
+        getToolbar().setTitle(getString(R.string.searchImageTitle));
 
-        Button searchDate = findViewById(R.id.searchImageButton);
-        Button saveImage = findViewById(R.id.saveImageButton);
+        final Button searchDate = findViewById(R.id.searchImageButton);
+        final Button saveImage = findViewById(R.id.saveImageButton);
 
-        TextView hdURL = findViewById(R.id.searchImageHdURL);
+        final TextView hdURL = findViewById(R.id.searchImageHdURL);
         hdURL.setOnClickListener((click) -> {
-
             Uri imageLocation = Uri.parse(hdURL.getText().toString());
             Intent goBrowser = new Intent(Intent.ACTION_VIEW, imageLocation);
             startActivity(goBrowser);
-
         });
 
         datePicker = getDatePickerDialog(new DatePickerListener());
-        datePicker.setTitle(R.string.pickerTitle);
-
+        datePicker.setTitle(getString(R.string.pickerTitle));
         searchDate.setOnClickListener((click) -> {
-
             datePicker.show();
-
         });
 
         saveImage.setOnClickListener((click) -> {
-            TextView imageTitle = findViewById(R.id.searchImageName);
+            final TextView imageTitle = findViewById(R.id.searchImageName);
             if (ImageInfoWrapper.exists(newImage.getDate())) {
-
                 Snackbar.make(imageTitle, getString(R.string.haveImage), Snackbar.LENGTH_LONG)
                         .setBackgroundTint(getColor(R.color.teal_700))
                         .show();
-
             } else {
-
                 addToDB();
             }
         });
     }
 
-    private void progressVis(ProgressBar progress, boolean isVisible) {
+    public static void shutdownExecutorService() {
+        GET_IMAGE_THREAD_POOL.shutdown();
+    }
 
+    private void progressVis(ProgressBar progress, boolean isVisible) {
         if (isVisible) {
             progress.setVisibility(View.VISIBLE);
         } else {
@@ -109,32 +104,29 @@ public class SearchImage extends MainToolBar {
      * @param reason reason for this dialog being created
      */
 
-    protected void alertDate(String reason) {
-
+    protected void alertDate(BadDateReason reason) {
         String alertString = null;
         switch (reason) {
-            case "past":
+            case PAST:
                 alertString = getString(R.string.dateRangePast);
                 break;
-            case "future":
+            case FUTURE:
                 alertString = getString(R.string.dateRangeFuture);
                 break;
-            case "video":
+            case VIDEO:
                 alertString = getString(R.string.dateRangeVideo);
                 break;
             default:
                 break;
         }
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         progressVis(findViewById(R.id.progressId), false);
-
-        alertDialogBuilder.setTitle(R.string.dateOutRange)
+        alertDialogBuilder.setTitle(getString(R.string.dateOutRange))
                 .setMessage(alertString)
-                .setPositiveButton(R.string.yes, (click, arg) -> {
+                .setPositiveButton(getString(R.string.yes), (click, arg) -> {
                     datePicker.show();
                 })
-                .setNegativeButton(R.string.no, (click, arg) -> {
+                .setNegativeButton(getString(R.string.no), (click, arg) -> {
                 })
                 .create()
                 .show();
@@ -151,11 +143,9 @@ public class SearchImage extends MainToolBar {
      */
 
     private void addToDB() {
-
         dao.createEntry(newImage);
         ImageInfoWrapper.setImages(newImage);
-        Toast saveToast = Toast.makeText(this, R.string.saveToast, Toast.LENGTH_LONG);
-        saveToast.show();
+        Toast.makeText(this, getString(R.string.saveToast), Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -164,33 +154,30 @@ public class SearchImage extends MainToolBar {
      * @return new DatePickerDialog
      */
     private DatePickerDialog getDatePickerDialog(DatePickerDialog.OnDateSetListener listen) {
-
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         return new DatePickerDialog(this, listen, cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
     }
 
     private void getNewImageEntry(String newDate) {
-        ExecutorService getImageThreadPool = Executors.newSingleThreadExecutor();
-
-        getImageThreadPool.execute(new FetchPhotoThread("https://api.nasa.gov/planetary/apod?api_key="
-                + getSharedPreferences("apiKey", MODE_PRIVATE).getString("key", "")
-                + "&date=" + newDate));
-
+        GET_IMAGE_THREAD_POOL.execute(new FetchPhotoThread(
+                String.format(Constants.NASA_FETCH_URL,
+                        getSharedPreferences(Constants.API_KEY, MODE_PRIVATE).getString(Constants.KEY, ""),
+                        newDate)));
         progressVis(findViewById(R.id.progressId), true);
     }
 
     private void setScreen(ImageEntry entry) throws IOException {
 
-        ProgressBar progress = findViewById(R.id.progressId);
+        final ProgressBar progress = findViewById(R.id.progressId);
         progress.setVisibility(View.INVISIBLE);
 
-        TextView imageTitle = findViewById(R.id.searchImageName);
-        TextView imageDate = findViewById(R.id.searchImageDate);
-        TextView imageUrl = findViewById(R.id.searchImageURL);
-        TextView imageHDUrl = findViewById(R.id.searchImageHdURL);
-        TextView imageExplanation = findViewById(R.id.searchImageExplanation);
-        ImageView newImage = findViewById(R.id.searchImageView);
+        final TextView imageTitle = findViewById(R.id.searchImageName);
+        final TextView imageDate = findViewById(R.id.searchImageDate);
+        final TextView imageUrl = findViewById(R.id.searchImageURL);
+        final TextView imageHDUrl = findViewById(R.id.searchImageHdURL);
+        final TextView imageExplanation = findViewById(R.id.searchImageExplanation);
+        final ImageView newImage = findViewById(R.id.searchImageView);
 
         imageTitle.setText(entry.getTitle());
         imageDate.setText(entry.getDate());
@@ -198,7 +185,8 @@ public class SearchImage extends MainToolBar {
         imageHDUrl.setText(entry.getHdURL());
         imageExplanation.setText(entry.getExplanation());
         newImage.setImageBitmap(entry.getImageFile());
-        Button save = findViewById(R.id.saveImageButton);
+
+        final Button save = findViewById(R.id.saveImageButton);
         save.setVisibility(View.VISIBLE);
     }
 
@@ -218,34 +206,26 @@ public class SearchImage extends MainToolBar {
         @Override
         public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int day) {
 
-            Calendar cal = Calendar.getInstance();
+            final Calendar cal = Calendar.getInstance();
             cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-            Calendar earliest = Calendar.getInstance();
+            final Calendar earliest = Calendar.getInstance();
             earliest.set(1995, Calendar.JUNE, 20);
             if (cal.after(Calendar.getInstance())) {
-
-                alertDate("future");
-
+                alertDate(BadDateReason.FUTURE);
             } else if (cal.before(earliest)) {
-
-                alertDate("past");
+                alertDate(BadDateReason.PAST);
             } else {
-
-                DateFormat imageDate = new SimpleDateFormat("yyyy-MM-dd");
-                String newDate = imageDate.format(cal.getTime());
+                final DateFormat imageDate = new SimpleDateFormat(Constants.DATE_FORMAT_PATTERN);
+                final String newDate = imageDate.format(cal.getTime());
                 getNewImageEntry(newDate);
             }
         }
     }
 
     private class FetchPhotoThread implements Runnable {
-
         String url;
-
         public FetchPhotoThread(String url) {
-
             this.url = url;
-
         }
 
         /**
@@ -253,39 +233,30 @@ public class SearchImage extends MainToolBar {
          */
         @Override
         public void run() {
-
             try {
+                final JSONObject jObject = getImageInfo(this.url);
+                final String mediaType = jObject.getString(Constants.MEDIA_TYPE_STRING);
 
-                JSONObject jObject = getImageInfo(this.url);
-                String mediaType = jObject.getString("media_type");
-
-                if (mediaType == null || !mediaType.contentEquals("image")) {
-
-                    runOnUiThread(()-> alertDate("video"));
-
+                if (mediaType == null || !mediaType.contentEquals(Constants.IMAGE_STRING)) {
+                    runOnUiThread(()-> alertDate(BadDateReason.VIDEO));
                 } else {
-
-                    String explanation = jObject.getString("explanation");
-                    String date = jObject.getString("date");
-                    String title = jObject.getString("title");
-                    String url = jObject.getString("url");
-                    String hdUrl = jObject.getString("hdurl");
-                    Bitmap image = getImageData(url);
+                    final String explanation = jObject.getString(Constants.EXPLANATION_STRING);
+                    final String date = jObject.getString(Constants.DATE_STRING);
+                    final String title = jObject.getString(Constants.TITLE_STRING);
+                    final String url = jObject.getString(Constants.URL_STRING);
+                    final String hdUrl = jObject.getString(Constants.HD_URL_STRING);
+                    final Bitmap image = getImageData(url);
 
                     runOnUiThread(()->{
-
                         try {
-
                             newImage = new ImageEntry(dao.getNextKeyNumber(), title, url, date, hdUrl, explanation, image);
                             setScreen(newImage);
-
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     });
                 }
             } catch (IOException | JSONException e) {
-
                 e.printStackTrace();
             }
         }
@@ -294,10 +265,7 @@ public class SearchImage extends MainToolBar {
          * gets a new HttpURLConnection
          */
         private HttpURLConnection getConnection(String location) throws IOException {
-
-            URL url = new URL(location);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            return urlConnection;
+            return (HttpURLConnection) new URL(location).openConnection();
         }
 
         /**
@@ -306,19 +274,20 @@ public class SearchImage extends MainToolBar {
          * @param imageURL the location of the image
          * @throws IOException
          */
-
         private Bitmap getImageData(String imageURL) throws IOException {
-
             Bitmap image = null;
-            HttpURLConnection urlConnection = getConnection(imageURL);
-
-            int responseCode = urlConnection.getResponseCode();
-            if (responseCode == 200) {
-
-                image = BitmapFactory.decodeStream(urlConnection.getInputStream());
+            HttpURLConnection urlConnection = null;
+            try {
+                urlConnection = getConnection(imageURL);
+                if (urlConnection.getResponseCode() == 200) {
+                    image = BitmapFactory.decodeStream(urlConnection.getInputStream());
+                }
+                return image;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
             }
-
-            return image;
         }
 
         /**
@@ -332,24 +301,26 @@ public class SearchImage extends MainToolBar {
          */
 
         private JSONObject getImageInfo(String imageURL) throws IOException, JSONException {
-
             HttpURLConnection urlConnection = getConnection(imageURL);
             JSONObject jObject = null;
             int responseCode = urlConnection.getResponseCode();
             if (responseCode == 200) {
-                InputStream inputStream = new URL(imageURL).openStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
+                final InputStream inputStream = new URL(imageURL).openStream();
+                try(final BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8)) {
+                    final StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    final String result = sb.toString();
+                    jObject = new JSONObject(result);
+                } finally {
+                    inputStream.close();
+                    urlConnection.disconnect();
                 }
-                String result = sb.toString();
-                inputStream.close();
-                jObject = new JSONObject(result);
             }
             return jObject;
         }
-
     }
 }

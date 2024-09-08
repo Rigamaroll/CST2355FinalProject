@@ -18,7 +18,6 @@ import java.io.Serializable;
  * could be serialized into the database.  The bitmap isn't a serializable
  * object.
  */
-
 public class ImageEntry implements Serializable {
 
     private final long id;
@@ -77,14 +76,13 @@ public class ImageEntry implements Serializable {
 
     public Bitmap getImageFile() throws IOException {
 
-        Bitmap imageBits;
-        ByteArrayInputStream imageInput = new ByteArrayInputStream(this.imageFile);
-        ObjectInputStream newImage = new ObjectInputStream(imageInput);
-        imageBits = BitmapFactory.decodeStream(newImage);
-        newImage.close();
-        imageInput.close();
-
-        return imageBits;
+        try ( final ByteArrayInputStream imageInput = new ByteArrayInputStream(this.imageFile);
+              final ObjectInputStream newImage = new ObjectInputStream(imageInput)) {
+            final Bitmap imageBits = BitmapFactory.decodeStream(newImage);
+            return imageBits;
+        } catch (IOException e) {
+            throw e;
+        }
     }
 
     /**
@@ -95,17 +93,15 @@ public class ImageEntry implements Serializable {
      */
     public void setImageFile(Bitmap serialize) throws IOException {
 
-        byte[] converted;
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        ObjectOutputStream objOut = new ObjectOutputStream(bytes);
-        serialize.compress(Bitmap.CompressFormat.JPEG, 70, objOut);
-        converted = bytes.toByteArray();
-
-        objOut.flush();
-        objOut.close();
-        bytes.flush();
-        bytes.close();
-        this.imageFile = converted;
+        try (final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        final ObjectOutputStream objOut = new ObjectOutputStream(bytes)) {
+            serialize.compress(Bitmap.CompressFormat.JPEG, 70, objOut);
+            final byte[] converted = bytes.toByteArray();
+            objOut.flush();
+            bytes.flush();
+            this.imageFile = converted;
+        } catch (IOException e) {
+            throw e;
+        }
     }
-
 }

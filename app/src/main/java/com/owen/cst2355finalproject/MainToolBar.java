@@ -26,15 +26,18 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
     ActionBarDrawerToggle toggleDrawer;
     NavigationView navView;
 
-    public MainToolBar() {
+    public MainToolBar() {}
 
+    @Override
+    protected void onDestroy() {
+        SearchImage.shutdownExecutorService();
+        super.onDestroy();
     }
 
     /**
      * called by any object extending this class to initialize the bar
      * and drawer.
      */
-
     public void initialize() {
 
         navView = findViewById(R.id.navView);
@@ -50,9 +53,7 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
     /**
      * @return the toolbar the activity uses.
      */
-
     public Toolbar getToolbar() {
-
         return toolbar;
     }
 

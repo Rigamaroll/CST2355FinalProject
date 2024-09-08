@@ -1,52 +1,61 @@
 package com.owen.cst2355finalproject;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class ApplicationDAO {
 
     private ImageDbOpener dbOpener;
 
     public ApplicationDAO(Context context) {
-
         dbOpener = new ImageDbOpener(context);
         if (ImageInfoWrapper.listSize() == 0) {
-
             loadFromDB();
         }
-
     }
 
     public SQLiteDatabase getImageDb(boolean type) {
-
-        SQLiteDatabase imageDb = type ? dbOpener.getWritableDatabase() : dbOpener.getReadableDatabase();
-        return imageDb;
+        return type ? dbOpener.getWritableDatabase() : dbOpener.getReadableDatabase();
     }
 
     public synchronized long getNextKeyNumber() {
         long id = 0;
-        Cursor results = getImageDb(false).rawQuery("SELECT max(seq) FROM sqlite_sequence;", null, null);
-        while (results.moveToNext()) {
-
-            id = results.getLong(0) + 1;
+        try (Cursor results = getImageDb(false)
+                .rawQuery("SELECT max(seq) FROM sqlite_sequence;", null, null)) {
+            while (results.moveToNext()) {
+                id = results.getLong(0) + 1;
+            }
+            return id;
         }
-        if (results != null) {
-            results.close();
-        }
-
-        return id;
     }
 
     public void createEntry(ImageEntry imageEntry) {
-
-        new CreationThread(getImageDb(true), imageEntry).start();
+        final ContentValues newRow = new ContentValues();
+        byte[] bytes = null;
+        try (final SQLiteDatabase database = getImageDb(true);
+                final ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+             final ObjectOutputStream objOut = new ObjectOutputStream(bytesOut)) {
+            objOut.writeObject(imageEntry);
+            objOut.flush();
+            bytes = bytesOut.toByteArray();
+            bytesOut.flush();
+            newRow.put(Constants.COL_IMAGE_ENTRY_OBJECT, bytes);
+            database.insert(Constants.TABLE_NAME, null, newRow);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteEntry(long id) {
-
-        new DeleterThread(getImageDb(true), id).start();
-
+        try (final SQLiteDatabase database = getImageDb(true)) {
+            database.delete(Constants.TABLE_NAME, Constants.COL_ID + " = ?", new String[]{String.valueOf(id)});
+        }
     }
 
     /**
@@ -54,10 +63,7 @@ public class ApplicationDAO {
      * to convert the Blob back into an ImageEntry object, and the ImageEntry object is put
      * into the CopyOnWriteArrayList.  This is done for each row in the Cursor.
      */
-
     private void loadFromDB() {
-
         new LoadingThread(getImageDb(false)).start();
     }
-
 }

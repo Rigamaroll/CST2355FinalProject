@@ -9,16 +9,17 @@ import java.io.ObjectInputStream;
 
 public class LoadingThread extends Thread {
 
-    private SQLiteDatabase database;
+    private static final String GET_ALL_RESULTS_QUERY =
+            String.format("SELECT %s,%s FROM IMAGE",Constants.COL_ID, Constants.COL_IMAGE_ENTRY_OBJECT);
+
+    private final SQLiteDatabase database;
 
     public LoadingThread(SQLiteDatabase db) {
-
         database = db;
     }
 
     @Override
     public void run() {
-
         loadFromDB();
     }
 
@@ -27,27 +28,23 @@ public class LoadingThread extends Thread {
      * to convert the Blob back into an ImageEntry object, and the ImageEntry object is put
      * into the CopyOnWriteArrayList.  This is done for each row in the Cursor.
      */
-
     private void loadFromDB() {
+        try (//query all the results from the database:
+                final Cursor results = database.rawQuery(GET_ALL_RESULTS_QUERY, null)){
 
-        //query all the results from the database:
-        Cursor results = database.rawQuery("SELECT " + ImageDbOpener.COL_ID + ", "
-                + ImageDbOpener.COL_IMAGEENTRY_OBJECT + " FROM IMAGE;", null);
+            //find the column indices:
+            final int imageObject = results.getColumnIndex(Constants.COL_IMAGE_ENTRY_OBJECT);
 
-        //find the column indices:
+            //iterate over the results, return true if there is a next item:
+            while (results.moveToNext()) {
 
-        int imageObject = results.getColumnIndex(ImageDbOpener.COL_IMAGEENTRY_OBJECT);
-
-        //iterate over the results, return true if there is a next item:
-
-        while (results.moveToNext()) {
-
-            byte[] imageEntryObject = results.getBlob(imageObject);
-            ImageEntry newImageEntry = convertFromBlob(imageEntryObject);
-            ImageInfoWrapper.setImages(newImageEntry);
+                final byte[] imageEntryObject = results.getBlob(imageObject);
+                final ImageEntry newImageEntry = convertFromBlob(imageEntryObject);
+                ImageInfoWrapper.setImages(newImageEntry);
+            }
+        } finally {
+            database.close();
         }
-        results.close();
-        database.close();
     }
 
     /**
@@ -58,12 +55,9 @@ public class LoadingThread extends Thread {
      */
     private ImageEntry convertFromBlob(byte[] imageEntryObject) {
         ImageEntry newImageEntry = null;
-        try {
-            ByteArrayInputStream imageInput = new ByteArrayInputStream(imageEntryObject);
-            ObjectInputStream newImage = new ObjectInputStream(imageInput);
+        try (ByteArrayInputStream imageInput = new ByteArrayInputStream(imageEntryObject);
+             ObjectInputStream newImage = new ObjectInputStream(imageInput)){
             newImageEntry = (ImageEntry) newImage.readObject();
-            newImage.close();
-            imageInput.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

@@ -14,14 +14,9 @@ public class ImageDbOpener extends SQLiteOpenHelper {
 
     protected final static String DATABASE_NAME = "ImageDB";
     protected final static int VERSION_NUM = 1;
-    public final static String TABLE_NAME = "Image";
-    public final static String COL_IMAGEENTRY_OBJECT = "ImageEntry";
-    public final static String COL_ID = "_id";
 
     public ImageDbOpener(@Nullable Context context) {
-
         super(context, DATABASE_NAME, null, VERSION_NUM);
-
     }
 
     /**
@@ -29,12 +24,10 @@ public class ImageDbOpener extends SQLiteOpenHelper {
      *
      * @param imageDB
      */
-
     @Override
     public void onCreate(SQLiteDatabase imageDB) {
-
-        imageDB.execSQL("CREATE TABLE " + TABLE_NAME + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + COL_IMAGEENTRY_OBJECT + " BLOB);");
+        imageDB.execSQL("CREATE TABLE " + Constants.TABLE_NAME + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + Constants.COL_IMAGE_ENTRY_OBJECT + " BLOB);");
     }
 
     /**
@@ -46,8 +39,6 @@ public class ImageDbOpener extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase imageDB, int oldVersion, int newVersion) {
-
         onCreate(imageDB);
-
     }
 }
