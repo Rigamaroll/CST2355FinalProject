@@ -39,7 +39,6 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
      * and drawer.
      */
     public void initialize() {
-
         navView = findViewById(R.id.navView);
         toolbar = findViewById(R.id.mainToolBar);
         drawer = findViewById(R.id.navDrawer);
@@ -61,7 +60,6 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
      * @return the DrawerLayout being used
      */
     public DrawerLayout getDrawer() {
-
         return this.drawer;
     }
 
@@ -69,7 +67,6 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
      * @return the NavigationView being used
      */
     public NavigationView getNavView() {
-
         return this.navView;
     }
 
@@ -89,9 +86,7 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.toolbar_menu, menu);
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
 
@@ -104,59 +99,43 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         String alertText = helpAlert();
-
         if (String.valueOf(item.getItemId()).contentEquals(String.valueOf(R.id.helpScreen))) {
-
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setTitle(R.string.helpAlert)
                     .setMessage(alertText)
                     .setPositiveButton(R.string.ok, (click, arg) -> {
-
                     })
                     .create()
                     .show();
-
             return true;
-
         }
-
         return super.onOptionsItemSelected(item);
     }
 
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
         switch (item.getItemId()) {
-
             case R.id.goHome:
                 drawer.close();
-                Intent goDash = new Intent(this, Dashboard.class);
-                startActivity(goDash);
+                startActivity(new Intent(this, Dashboard.class));
                 return true;
-
             case R.id.goSearchPage:
                 drawer.close();
-                Intent goSearch = new Intent(this, SearchImage.class);
-                startActivity(goSearch);
+                startActivity(new Intent(this, SearchImage.class));
                 return true;
-
             case R.id.goViewImagePage:
                 drawer.close();
-                Intent goViewAll = new Intent(this, ViewAllImage.class);
-                startActivity(goViewAll);
+                startActivity(new Intent(this, ViewAllImage.class));
                 return true;
-
             case R.id.logout:
                 drawer.close();
-                Intent logout = new Intent(this, MainActivity.class);
+                final Intent logout = new Intent(this, MainActivity.class);
                 logout.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(logout);
                 return true;
         }
-
         return false;
     }
 
@@ -167,34 +146,22 @@ public class MainToolBar extends AppCompatActivity implements NavigationView.OnN
      */
 
     public String helpAlert() {
-
-        String className = getClass().toString().toLowerCase();
+        final String className = getClass().toString().toLowerCase();
         String alertText = "";
-
         switch (className) {
-
             case "class com.owen.cst2355finalproject.dashboard":
-
                 alertText = getString(R.string.helpDashboard);
                 break;
-
             case "class com.owen.cst2355finalproject.mainactivity":
-
                 alertText = getString(R.string.helpLogin);
                 break;
-
             case "class com.owen.cst2355finalproject.searchimage":
-
                 alertText = getString(R.string.helpSearchImage);
                 break;
-
             case "class com.owen.cst2355finalproject.viewallimage":
-
                 alertText = getString(R.string.helpViewAllImage);
                 break;
-
         }
         return alertText;
-
     }
 }

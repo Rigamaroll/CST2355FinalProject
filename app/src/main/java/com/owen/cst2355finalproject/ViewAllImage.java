@@ -42,16 +42,12 @@ public class ViewAllImage extends MainToolBar {
         initialize();
         getToolbar().setTitle(R.string.viewAllImageTitle);
 
-        ListView imageList = findViewById(R.id.imageList);
+        final ListView imageList = findViewById(R.id.imageList);
         imageList.setAdapter(imageAdapter = new ImageListAdapter());
-
         imageList.setOnItemClickListener((p, b, pos, id) -> {
-
             setFragment(pos);
         });
-
         imageList.setOnItemLongClickListener((p, b, pos, id) -> {
-
             deleteListItem(id, pos);
             return true;
         });
@@ -65,8 +61,7 @@ public class ViewAllImage extends MainToolBar {
      */
 
     private Bundle getFragData(int pos) {
-
-        Bundle fragData = new Bundle();
+        final Bundle fragData = new Bundle();
         fragData.putSerializable("imageEntry", ImageInfoWrapper.getImages(pos));
         return fragData;
     }
@@ -78,12 +73,8 @@ public class ViewAllImage extends MainToolBar {
      */
 
     private void setFragment(int pos) {
-
-        boolean isTablet = findViewById(R.id.fragmentFrame) != null;
-
-        if (isTablet) {
-
-            ImageFragment imageFrag = new ImageFragment();
+        if (findViewById(R.id.fragmentFrame) != null) {
+            final ImageFragment imageFrag = new ImageFragment();
             imageFrag.setArguments(getFragData(pos));
             getSupportFragmentManager()
                     .beginTransaction()
@@ -91,8 +82,7 @@ public class ViewAllImage extends MainToolBar {
                     .addToBackStack(null)
                     .commit();
         } else {
-
-            Intent seeImageInfo = new Intent(ViewAllImage.this, EmptyForFragment.class);
+            final Intent seeImageInfo = new Intent(ViewAllImage.this, EmptyForFragment.class);
             seeImageInfo.putExtras(getFragData(pos));
             startActivity(seeImageInfo);
         }
@@ -105,30 +95,22 @@ public class ViewAllImage extends MainToolBar {
      * @param pos the index number in the CopyOnWriteArrayList storing the ImageEntry objects
      */
     private void deleteListItem(long id, int pos) {
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(Constants.DELETE_DIALOG_TEXT)
-
                 .setMessage(String.format(Constants.DELETE_IMAGE_INFO, ImageInfoWrapper.getImages(pos).getTitle(), id))
                 .setPositiveButton("Yes", (click, arg) -> {
-
-                    Fragment imageFrag = getSupportFragmentManager().findFragmentById(R.id.imageTitle);
-
+                    final Fragment imageFrag = getSupportFragmentManager().findFragmentById(R.id.imageTitle);
                     if (imageFrag != null) {
-
                         getSupportFragmentManager().beginTransaction().remove(imageFrag).commit();
                     }
-
                     dao.deleteEntry(id);
                     ImageInfoWrapper.deleteImages(pos);
                     imageAdapter.notifyDataSetChanged();
-                    Toast deleteToast = Toast.makeText(this, R.string.deleteToast, Toast.LENGTH_LONG);
-                    deleteToast.show();
+                    Toast.makeText(this, R.string.deleteToast, Toast.LENGTH_LONG)
+                    .show();
                 })
-
                 .setNegativeButton("No", (click, arg) -> {
                 })
-
                 .create().show();
     }
 
@@ -138,12 +120,10 @@ public class ViewAllImage extends MainToolBar {
     private class ImageListAdapter extends BaseAdapter {
 
         public int getCount() {
-
             return ImageInfoWrapper.listSize();
         }
 
         public ImageEntry getItem(int position) {
-
             return ImageInfoWrapper.getImages(position);
         }
 
@@ -162,11 +142,9 @@ public class ViewAllImage extends MainToolBar {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
-            LayoutInflater inflater = getLayoutInflater();
-            ImageEntry imageFile = ImageInfoWrapper.getImages(position);
-
-            View view = inflater.inflate(R.layout.image_list, parent, false);
+            final LayoutInflater inflater = getLayoutInflater();
+            final ImageEntry imageFile = ImageInfoWrapper.getImages(position);
+            final View view = inflater.inflate(R.layout.image_list, parent, false);
 
             Bitmap image = null;
             try {
@@ -174,12 +152,9 @@ public class ViewAllImage extends MainToolBar {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             ((ImageView) view.findViewById(R.id.imageItem)).setImageBitmap(image);
             ((TextView) view.findViewById(R.id.imageTitle)).setText(imageFile.getTitle());
-
             return view;
         }
     }
-
 }

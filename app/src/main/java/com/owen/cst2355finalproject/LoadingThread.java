@@ -37,7 +37,6 @@ public class LoadingThread extends Thread {
 
             //iterate over the results, return true if there is a next item:
             while (results.moveToNext()) {
-
                 final byte[] imageEntryObject = results.getBlob(imageObject);
                 final ImageEntry newImageEntry = convertFromBlob(imageEntryObject);
                 ImageInfoWrapper.setImages(newImageEntry);
@@ -55,8 +54,8 @@ public class LoadingThread extends Thread {
      */
     private ImageEntry convertFromBlob(byte[] imageEntryObject) {
         ImageEntry newImageEntry = null;
-        try (ByteArrayInputStream imageInput = new ByteArrayInputStream(imageEntryObject);
-             ObjectInputStream newImage = new ObjectInputStream(imageInput)){
+        try (final ByteArrayInputStream imageInput = new ByteArrayInputStream(imageEntryObject);
+             final ObjectInputStream newImage = new ObjectInputStream(imageInput)){
             newImageEntry = (ImageEntry) newImage.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

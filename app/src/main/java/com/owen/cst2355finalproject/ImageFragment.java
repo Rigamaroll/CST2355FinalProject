@@ -34,18 +34,18 @@ public class ImageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Bundle activityData = getArguments();
+        final Bundle activityData = getArguments();
 
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_image, container, false);
-        TextView fragmentTitle = view.findViewById(R.id.fragmentTitle);
-        TextView fragmentDate = view.findViewById(R.id.fragmentDate);
-        TextView fragmentExplanation = view.findViewById(R.id.fragmentExplanation);
-        TextView fragmentURL = view.findViewById(R.id.fragmentURL);
-        TextView fragmentHdURL = view.findViewById(R.id.fragmentHdURL);
-        ImageView fragmentImage = view.findViewById((R.id.imageForFragment));
+        final View view = inflater.inflate(R.layout.fragment_image, container, false);
+        final TextView fragmentTitle = view.findViewById(R.id.fragmentTitle);
+        final TextView fragmentDate = view.findViewById(R.id.fragmentDate);
+        final TextView fragmentExplanation = view.findViewById(R.id.fragmentExplanation);
+        final TextView fragmentURL = view.findViewById(R.id.fragmentURL);
+        final TextView fragmentHdURL = view.findViewById(R.id.fragmentHdURL);
+        final ImageView fragmentImage = view.findViewById((R.id.imageForFragment));
 
-        ImageEntry bundleImage = (ImageEntry) activityData.getSerializable("imageEntry");
+        final ImageEntry bundleImage = (ImageEntry) activityData.getSerializable("imageEntry");
 
         fragmentTitle.append(bundleImage.getTitle());
         fragmentDate.append(bundleImage.getDate());
@@ -58,19 +58,15 @@ public class ImageFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         fragmentHdURL.setOnClickListener((click) -> {
-
             dispatchGoBrowserHDURL(bundleImage.getHdURL());
         });
-
         return view;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
     }
 
     /**
@@ -80,9 +76,7 @@ public class ImageFragment extends Fragment {
      */
 
     private void dispatchGoBrowserHDURL(String url) {
-
-        Uri imageLocation = Uri.parse(url);
-        Intent goBrowser = new Intent(Intent.ACTION_VIEW, imageLocation);
-        startActivity(goBrowser);
+        final Uri imageLocation = Uri.parse(url);
+        startActivity(new Intent(Intent.ACTION_VIEW, imageLocation));
     }
 }

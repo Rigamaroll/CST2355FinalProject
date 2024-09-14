@@ -29,7 +29,6 @@ public class ImageEntry implements Serializable {
     private byte[] imageFile = null;
 
     public ImageEntry(long id, String title, String url, String date, String hdURL, String explanation, Bitmap imageFile) {
-
         this.id = id;
         this.url = url;
         this.date = date;
@@ -75,7 +74,6 @@ public class ImageEntry implements Serializable {
      */
 
     public Bitmap getImageFile() throws IOException {
-
         try ( final ByteArrayInputStream imageInput = new ByteArrayInputStream(this.imageFile);
               final ObjectInputStream newImage = new ObjectInputStream(imageInput)) {
             final Bitmap imageBits = BitmapFactory.decodeStream(newImage);
@@ -92,7 +90,6 @@ public class ImageEntry implements Serializable {
      * @throws IOException
      */
     public void setImageFile(Bitmap serialize) throws IOException {
-
         try (final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         final ObjectOutputStream objOut = new ObjectOutputStream(bytes)) {
             serialize.compress(Bitmap.CompressFormat.JPEG, 70, objOut);

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -39,7 +40,8 @@ import java.util.concurrent.Executors;
  */
 
 public class SearchImage extends MainToolBar {
-    private static final ExecutorService GET_IMAGE_THREAD_POOL = Executors.newSingleThreadExecutor();
+    private static final ExecutorService FETCH_IMAGE_THREAD_POOL = Executors.newSingleThreadExecutor();
+    private static final Object executorServiceLock = new Object();
     private DatePickerDialog datePicker;
     private ApplicationDAO dao;
     private ImageEntry newImage;
@@ -64,8 +66,8 @@ public class SearchImage extends MainToolBar {
 
         final TextView hdURL = findViewById(R.id.searchImageHdURL);
         hdURL.setOnClickListener((click) -> {
-            Uri imageLocation = Uri.parse(hdURL.getText().toString());
-            Intent goBrowser = new Intent(Intent.ACTION_VIEW, imageLocation);
+            final Uri imageLocation = Uri.parse(hdURL.getText().toString());
+            final Intent goBrowser = new Intent(Intent.ACTION_VIEW, imageLocation);
             startActivity(goBrowser);
         });
 
@@ -88,15 +90,14 @@ public class SearchImage extends MainToolBar {
     }
 
     public static void shutdownExecutorService() {
-        GET_IMAGE_THREAD_POOL.shutdown();
+
+        synchronized (executorServiceLock) {
+            FETCH_IMAGE_THREAD_POOL.shutdown();
+        }
     }
 
     private void progressVis(ProgressBar progress, boolean isVisible) {
-        if (isVisible) {
-            progress.setVisibility(View.VISIBLE);
-        } else {
-            progress.setVisibility(View.INVISIBLE);
-        }
+        progress.setVisibility(isVisible ? View.VISIBLE : View.INVISIBLE);
     }
 
     /**
@@ -160,10 +161,12 @@ public class SearchImage extends MainToolBar {
     }
 
     private void getNewImageEntry(String newDate) {
-        GET_IMAGE_THREAD_POOL.execute(new FetchPhotoThread(
-                String.format(Constants.NASA_FETCH_URL,
-                        getSharedPreferences(Constants.API_KEY, MODE_PRIVATE).getString(Constants.KEY, ""),
-                        newDate)));
+        synchronized (executorServiceLock) {
+            FETCH_IMAGE_THREAD_POOL.execute(new FetchPhotoThread(
+                    String.format(Constants.NASA_FETCH_URL,
+                            getSharedPreferences(Constants.API_KEY, MODE_PRIVATE).getString(Constants.KEY, ""),
+                            newDate)));
+        }
         progressVis(findViewById(R.id.progressId), true);
     }
 
@@ -204,7 +207,7 @@ public class SearchImage extends MainToolBar {
          * @param day
          */
         @Override
-        public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int day) {
+        public void onDateSet(DatePicker datePicker, int year, int month, int day) {
 
             final Calendar cal = Calendar.getInstance();
             cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
@@ -275,14 +278,11 @@ public class SearchImage extends MainToolBar {
          * @throws IOException
          */
         private Bitmap getImageData(String imageURL) throws IOException {
-            Bitmap image = null;
             HttpURLConnection urlConnection = null;
             try {
                 urlConnection = getConnection(imageURL);
-                if (urlConnection.getResponseCode() == 200) {
-                    image = BitmapFactory.decodeStream(urlConnection.getInputStream());
-                }
-                return image;
+                return urlConnection.getResponseCode() == 200 ?
+                        BitmapFactory.decodeStream(urlConnection.getInputStream()) : null;
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -301,10 +301,9 @@ public class SearchImage extends MainToolBar {
          */
 
         private JSONObject getImageInfo(String imageURL) throws IOException, JSONException {
-            HttpURLConnection urlConnection = getConnection(imageURL);
+            final HttpURLConnection urlConnection = getConnection(imageURL);
             JSONObject jObject = null;
-            int responseCode = urlConnection.getResponseCode();
-            if (responseCode == 200) {
+            if (urlConnection.getResponseCode() == 200) {
                 final InputStream inputStream = new URL(imageURL).openStream();
                 try(final BufferedReader reader =
                             new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8)) {

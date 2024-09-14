@@ -22,9 +22,8 @@ public class EmptyForFragment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_empty_for_fragment);
 
-        Bundle fragData = getIntent().getExtras();
-
-        ImageFragment imageFrag = new ImageFragment();
+        final Bundle fragData = getIntent().getExtras();
+        final ImageFragment imageFrag = new ImageFragment();
         imageFrag.setArguments(fragData);
         getSupportFragmentManager()
                 .beginTransaction()

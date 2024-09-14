@@ -76,17 +76,14 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void authenticate(EditText email, EditText pass) {
-
-        Intent dashboard = new Intent(this, Dashboard.class);
-        String lastLogin = saveLogin.getString(Constants.LAST_LOGIN_STRING, null);
+        final Intent dashboard = new Intent(this, Dashboard.class);
+        final String lastLogin = saveLogin.getString(Constants.LAST_LOGIN_STRING, null);
         dashboard.putExtra(Constants.LAST_LOGIN_STRING, lastLogin);
 
         if (passFile.getString(Constants.PASSWORD_STRING, "").contentEquals("")) {
-
             setNewPassword(pass);
             setPrefs(email, pass);
             startActivity(dashboard);
-
         } else if (!pass.getText().toString().contentEquals(passFile.getString(Constants.PASSWORD_STRING, ""))) {
             Toast.makeText(this, Constants.INCORRECT_PASSWORD_STRING, Toast.LENGTH_LONG).show();
         } else {
@@ -104,20 +101,15 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void saveSharedPrefs(LoginCredentials log) {
-
-        CheckBox savePass = findViewById(R.id.passwordCheckbox);
-        SharedPreferences.Editor edit = saveLogin.edit();
+        final CheckBox savePass = findViewById(R.id.passwordCheckbox);
+        final SharedPreferences.Editor edit = saveLogin.edit();
 
         if (savePass.isChecked()) {
-
             edit.putString(Constants.LOGIN_EMAIL_STRING, log.getEmail());
             edit.putString(Constants.LOGIN_PASS_STRING, log.getPass());
-
         } else {
-
             edit.putString(Constants.LOGIN_EMAIL_STRING, log.getEmail());
             edit.putString(Constants.LOGIN_PASS_STRING, "");
-
         }
         edit.putString(Constants.LAST_LOGIN_STRING, new Date().toString());
         edit.commit();
@@ -132,11 +124,9 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void setPrefs(EditText email, EditText pass) {
-
         login.setEmail(email.getText().toString());
         login.setPass(pass.getText().toString());
         saveSharedPrefs(login);
-
     }
 
     /**
@@ -146,8 +136,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void setNewPassword(EditText newPass) {
-
-        SharedPreferences.Editor edit = passFile.edit();
+        final SharedPreferences.Editor edit = passFile.edit();
         edit.putString(Constants.PASSWORD_STRING, newPass.getText().toString());
         edit.commit();
     }

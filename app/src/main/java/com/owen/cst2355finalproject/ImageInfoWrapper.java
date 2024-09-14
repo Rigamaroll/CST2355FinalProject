@@ -1,5 +1,9 @@
 package com.owen.cst2355finalproject;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -34,13 +38,8 @@ public class ImageInfoWrapper {
      * @return true if the image is already in the database.
      */
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public static boolean exists(String imageDate) {
-
-        for (ImageEntry dates : images) {
-            if (dates.getDate().contentEquals(imageDate)) {
-                return true;
-            }
-        }
-        return false;
+        return images.stream().anyMatch(x -> x.getDate().contentEquals(imageDate));
     }
 }

@@ -35,23 +35,21 @@ public class Dashboard extends MainToolBar {
         initialize();
         getToolbar().setTitle(R.string.dashBoardTitle);
 
-        TextView totalPhotos = findViewById(R.id.totalPhotos);
+        final TextView totalPhotos = findViewById(R.id.totalPhotos);
         totalPhotos.append(String.valueOf(ImageInfoWrapper.listSize()));
-        TextView lastLog = findViewById(R.id.lastLogin);
+        final TextView lastLog = findViewById(R.id.lastLogin);
         lastLog.append(lastLogin == null ? "" : lastLogin);
 
-        EditText api = findViewById(R.id.personalAPI);
+        final EditText api = findViewById(R.id.personalAPI);
         api.setText(getSharedPreferences("apiKey", MODE_PRIVATE).getString("key", ""));
 
         checkEmptyAPI(api);
 
-        Button setAPI = findViewById(R.id.setAPI);
+        final Button setAPI = findViewById(R.id.setAPI);
         setAPI.setOnClickListener((click) -> {
-
             setAPI(api);
             checkEmptyAPI(api);
             Toast.makeText(this, R.string.apiKeySet, Toast.LENGTH_LONG).show();
-
         });
     }
 
@@ -62,8 +60,7 @@ public class Dashboard extends MainToolBar {
      */
 
     private void setAPI(EditText api) {
-
-        SharedPreferences.Editor edit = getSharedPreferences("apiKey", MODE_PRIVATE).edit();
+        final SharedPreferences.Editor edit = getSharedPreferences("apiKey", MODE_PRIVATE).edit();
         edit.putString("key", String.valueOf(api.getText()));
         edit.commit();
     }
@@ -76,7 +73,6 @@ public class Dashboard extends MainToolBar {
     private void checkEmptyAPI(EditText api) {
 
         if (String.valueOf(api.getText()).contentEquals("")) {
-
             api.setText(DEFAULT_API_KEY);
             setAPI(api);
         }
