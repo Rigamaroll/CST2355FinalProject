@@ -2,6 +2,8 @@ package com.owen.cst2355finalproject;
 
 public class Constants {
 
+    public static final String VERSION_NAME = "Version " + BuildConfig.VERSION_NAME;
+
     public static final String PASSWORD_STRING = "password";
     public static final String LAST_LOGIN_STRING = "lastLogin";
     public static final String INCORRECT_PASSWORD_STRING = "Your password is incorrect.  Please try again!";
