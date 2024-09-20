@@ -1,22 +1,28 @@
 package com.owen.cst2355finalproject;
 
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.Comparator;
 
 /**
  * Contains the ListView for the images, and what to do when they are selected.
@@ -25,6 +31,8 @@ public class ViewAllImage extends MainToolBar {
 
     private ImageListAdapter imageAdapter;
     private ApplicationDAO dao;
+    private SortDirection currentSortDirection = SortDirection.ASC;
+    private ViewAllSortField currentSortField = ViewAllSortField.SAVED_DATE;
 
     /**
      * Initializes the Toolbar, NavigationDrawer, and NavigationView, then initializes
@@ -34,6 +42,7 @@ public class ViewAllImage extends MainToolBar {
      *
      * @param savedInstanceState
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +50,6 @@ public class ViewAllImage extends MainToolBar {
         dao = new ApplicationDAO(this);
         initialize();
         getToolbar().setTitle(R.string.viewAllImageTitle);
-
         final ListView imageList = findViewById(R.id.imageList);
         imageList.setAdapter(imageAdapter = new ImageListAdapter());
         imageList.setOnItemClickListener((p, b, pos, id) -> {
@@ -50,6 +58,40 @@ public class ViewAllImage extends MainToolBar {
         imageList.setOnItemLongClickListener((p, b, pos, id) -> {
             deleteListItem(id, pos);
             return true;
+        });
+        final Spinner sortField = findViewById(R.id.sortField);
+        final Spinner sortOrder = findViewById(R.id.sortDirection);
+        final ArrayAdapter<ViewAllSortField> sortFieldAdapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ViewAllSortField.values());
+        final ArrayAdapter<SortDirection> sortDirectionAdapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, SortDirection.values());
+        sortField.setAdapter(sortFieldAdapter);
+        sortOrder.setAdapter(sortDirectionAdapter);
+        sortField.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                currentSortField = (ViewAllSortField) parentView.getSelectedItem();
+                ImageInfoWrapper.sortList(currentSortField,currentSortDirection);
+                imageAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        sortOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                currentSortDirection = (SortDirection) parentView.getSelectedItem();
+                ImageInfoWrapper.sortList(currentSortField,currentSortDirection);
+                imageAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
     }
 
@@ -97,7 +139,10 @@ public class ViewAllImage extends MainToolBar {
     private void deleteListItem(long id, int pos) {
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(Constants.DELETE_DIALOG_TEXT)
-                .setMessage(String.format(Constants.DELETE_IMAGE_INFO, ImageInfoWrapper.getImages(pos).getTitle(), id))
+                .setMessage(String.format(
+                        Constants.DELETE_IMAGE_INFO,
+                        ImageInfoWrapper.getImages(pos).getTitle(),
+                        ImageInfoWrapper.getImages(pos).getDate()))
                 .setPositiveButton("Yes", (click, arg) -> {
                     final Fragment imageFrag = getSupportFragmentManager().findFragmentById(R.id.imageTitle);
                     if (imageFrag != null) {

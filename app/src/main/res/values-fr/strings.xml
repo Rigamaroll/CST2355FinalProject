@@ -74,7 +74,9 @@
         URL normale et HDURL. Si vous cliquez sur l\'URL HD, cela vous amènera à votre navigateur et chargera l\'image HD. Simplement
         cliquez sur votre flèche de retour si vous souhaitez fermer la nouvelle fenêtre et revenir à votre liste. Si vous maintenez la photo enfoncée
         la liste, il vous donnera la possibilité de supprimer la photo de votre application. Vous pouvez naviguer avec le menu du tiroir de navigation.
-
+    <string name="viewAllImageDate">Date de l\'Image</string>
+    <string name="viewAllSavedDate">Date Enregistrée</string>
+    <string name="viewAllTitle">Titre</string>
 </string>
 
     <!--Image Fragment -->

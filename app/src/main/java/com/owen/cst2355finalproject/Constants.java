@@ -14,7 +14,7 @@ public class Constants {
     public static final String PASS_FILE_SHARED_PREF_NAME = "passFile";
 
     public static final String DELETE_DIALOG_TEXT = "Do you want to delete this?";
-    public static final String DELETE_IMAGE_INFO = "The selected image is: %s\nThe database id is: %d";
+    public static final String DELETE_IMAGE_INFO = "The selected image is: %s\nThe image date is: %s";
 
     public static final String NASA_FETCH_URL = "https://api.nasa.gov/planetary/apod?api_key=%s&date=%s";
     public static final String API_KEY = "apiKey";
