@@ -1,6 +1,7 @@
 package com.owen.cst2355finalproject;
 
 import com.owen.cst2355finalproject.enums.SortDirection;
+import com.owen.cst2355finalproject.enums.ViewAllFilterField;
 import com.owen.cst2355finalproject.enums.ViewAllSortField;
 
 import org.apache.commons.lang3.StringUtils;
@@ -83,20 +84,36 @@ public class ImageInfoWrapper {
     public static void filterByKeywords(
             final String keywords,
             final SortDirection direction,
-            final ViewAllSortField field) {
+            final ViewAllSortField sortField,
+            final ViewAllFilterField filterField) {
 
         images.addAll(FILTERED_OUT_IMAGES);
         if (StringUtils.isEmpty(keywords)) {
             FILTERED_OUT_IMAGES.clear();
         } else {
-            FILTERED_OUT_IMAGES = images.stream()
-                    .filter(image ->
-                            !(StringUtils.containsIgnoreCase(image.getTitle(), keywords)
-                                    || StringUtils.containsIgnoreCase(image.getExplanation(), keywords)))
-                    .collect(Collectors.toList());
+            switch (filterField) {
+                case TITLE:
+                    FILTERED_OUT_IMAGES = images.stream()
+                            .filter(image -> !StringUtils.containsIgnoreCase(image.getTitle(), keywords))
+                            .collect(Collectors.toList());
+                    break;
+                case EXPLANATION:
+                    FILTERED_OUT_IMAGES = images.stream()
+                            .filter(image -> !StringUtils.containsIgnoreCase(image.getExplanation(), keywords))
+                            .collect(Collectors.toList());
+                    break;
+                case ALL:
+                    FILTERED_OUT_IMAGES = images.stream()
+                            .filter(image ->
+                                    !(StringUtils.containsIgnoreCase(image.getTitle(), keywords)
+                                            || StringUtils.containsIgnoreCase(image.getExplanation(), keywords)))
+                            .collect(Collectors.toList());
+                    images.removeAll(FILTERED_OUT_IMAGES);
+                    break;
+            }
             images.removeAll(FILTERED_OUT_IMAGES);
         }
-        sortList(field, direction);
+        sortList(sortField, direction);
     }
 
     /**

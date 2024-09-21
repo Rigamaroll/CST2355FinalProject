@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.owen.cst2355finalproject.enums.SortDirection;
+import com.owen.cst2355finalproject.enums.ViewAllFilterField;
 import com.owen.cst2355finalproject.enums.ViewAllSortField;
 
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +38,7 @@ public class ViewAllImage extends MainToolBar {
     private ApplicationDAO dao;
     private SortDirection currentSortDirection = SortDirection.ASC;
     private ViewAllSortField currentSortField = ViewAllSortField.SAVED_DATE;
+    private ViewAllFilterField currentFilterfield = ViewAllFilterField.ALL;
 
     /**
      * Initializes the Toolbar, NavigationDrawer, and NavigationView, then initializes
@@ -73,13 +75,34 @@ public class ViewAllImage extends MainToolBar {
     private void setKeywordFilter() {
         final EditText keywordFilter = findViewById(R.id.keywordFilter);
         keywordFilter.setOnEditorActionListener((v, actionId, event) -> {
-            ImageInfoWrapper.filterByKeywords(v.getText().toString(), currentSortDirection, currentSortField);
+            ImageInfoWrapper.filterByKeywords(
+                    v.getText().toString(), currentSortDirection, currentSortField, currentFilterfield);
             imageAdapter.notifyDataSetChanged();
             return true;
         });
+        final Spinner filterField = findViewById(R.id.filterField);
+        final ArrayAdapter<ViewAllFilterField> filterFieldAdapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ViewAllFilterField.values());
+        filterField.setAdapter(filterFieldAdapter);
+        filterField.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                currentFilterfield = (ViewAllFilterField) parent.getSelectedItem();
+                if(!StringUtils.isEmpty(keywordFilter.getText().toString())) {
+                    ImageInfoWrapper.filterByKeywords(
+                            StringUtils.trim(keywordFilter.getText().toString()),
+                            currentSortDirection,
+                            currentSortField,
+                            currentFilterfield);
+                    imageAdapter.notifyDataSetChanged();
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
         final Button resetFilterButton = findViewById(R.id.resetFilterButton);
         resetFilterButton.setOnClickListener((click) -> {
-            ImageInfoWrapper.filterByKeywords(StringUtils.EMPTY, currentSortDirection, currentSortField);
+            ImageInfoWrapper.filterByKeywords(StringUtils.EMPTY, currentSortDirection, currentSortField, currentFilterfield);
             keywordFilter.setText(StringUtils.EMPTY);
             imageAdapter.notifyDataSetChanged();
         });
@@ -101,11 +124,8 @@ public class ViewAllImage extends MainToolBar {
                 ImageInfoWrapper.sortList(currentSortField,currentSortDirection);
                 imageAdapter.notifyDataSetChanged();
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
         sortOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -114,11 +134,8 @@ public class ViewAllImage extends MainToolBar {
                 ImageInfoWrapper.sortList(currentSortField,currentSortDirection);
                 imageAdapter.notifyDataSetChanged();
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 
