@@ -75,11 +75,8 @@
         click your back arrow if you want to close the new window and return to your list.  If you push and hold the photo in
         the list, it will give you an option to delete the photo from your app.  You can navigate away with the navigation drawer menu.
     </string>
-    <string name="sortAsc" translatable="false">ASC</string>
-    <string name="sortDesc" translatable="false">DESC</string>
-    <string name="viewAllImageDate">Image Date</string>
-    <string name="viewAllSavedDate">Saved Date</string>
-    <string name="viewAllTitle">Title</string>
+    <string name="keywordFilter">Keyword Filter</string>
+    <string name="resetFilterButton">Reset</string>
 
     <!--Image Fragment -->
 

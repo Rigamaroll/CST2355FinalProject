@@ -11,12 +11,14 @@ import java.io.ObjectOutputStream;
 
 public class ApplicationDAO {
 
+    private static boolean hasBeenLoaded = false;
     private ImageDbOpener dbOpener;
 
     public ApplicationDAO(Context context) {
         dbOpener = new ImageDbOpener(context);
-        if (ImageInfoWrapper.listSize() == 0) {
+        if (ImageInfoWrapper.listSize() == 0 && !hasBeenLoaded) {
             loadFromDB();
+            hasBeenLoaded = true;
         }
     }
 

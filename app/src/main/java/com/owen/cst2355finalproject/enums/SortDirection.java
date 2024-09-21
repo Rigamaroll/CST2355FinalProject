@@ -1,4 +1,4 @@
-package com.owen.cst2355finalproject;
+package com.owen.cst2355finalproject.enums;
 
 import android.os.Build;
 

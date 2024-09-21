@@ -1,13 +1,11 @@
 package com.owen.cst2355finalproject;
 
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,14 +13,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.owen.cst2355finalproject.enums.SortDirection;
+import com.owen.cst2355finalproject.enums.ViewAllSortField;
+
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
-import java.util.Comparator;
 
 /**
  * Contains the ListView for the images, and what to do when they are selected.
@@ -42,7 +46,6 @@ public class ViewAllImage extends MainToolBar {
      *
      * @param savedInstanceState
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +53,12 @@ public class ViewAllImage extends MainToolBar {
         dao = new ApplicationDAO(this);
         initialize();
         getToolbar().setTitle(R.string.viewAllImageTitle);
+        setImageList();
+        setSpinners();
+        setKeywordFilter();
+    }
+
+    private void setImageList() {
         final ListView imageList = findViewById(R.id.imageList);
         imageList.setAdapter(imageAdapter = new ImageListAdapter());
         imageList.setOnItemClickListener((p, b, pos, id) -> {
@@ -59,6 +68,24 @@ public class ViewAllImage extends MainToolBar {
             deleteListItem(id, pos);
             return true;
         });
+    }
+
+    private void setKeywordFilter() {
+        final EditText keywordFilter = findViewById(R.id.keywordFilter);
+        keywordFilter.setOnEditorActionListener((v, actionId, event) -> {
+            ImageInfoWrapper.filterByKeywords(v.getText().toString(), currentSortDirection, currentSortField);
+            imageAdapter.notifyDataSetChanged();
+            return true;
+        });
+        final Button resetFilterButton = findViewById(R.id.resetFilterButton);
+        resetFilterButton.setOnClickListener((click) -> {
+            ImageInfoWrapper.filterByKeywords(StringUtils.EMPTY, currentSortDirection, currentSortField);
+            keywordFilter.setText(StringUtils.EMPTY);
+            imageAdapter.notifyDataSetChanged();
+        });
+    }
+
+    private void setSpinners() {
         final Spinner sortField = findViewById(R.id.sortField);
         final Spinner sortOrder = findViewById(R.id.sortDirection);
         final ArrayAdapter<ViewAllSortField> sortFieldAdapter =
@@ -104,7 +131,7 @@ public class ViewAllImage extends MainToolBar {
 
     private Bundle getFragData(int pos) {
         final Bundle fragData = new Bundle();
-        fragData.putSerializable("imageEntry", ImageInfoWrapper.getImages(pos));
+        fragData.putSerializable("imageEntry", ImageInfoWrapper.getImage(pos));
         return fragData;
     }
 
@@ -141,15 +168,15 @@ public class ViewAllImage extends MainToolBar {
         alertDialogBuilder.setTitle(Constants.DELETE_DIALOG_TEXT)
                 .setMessage(String.format(
                         Constants.DELETE_IMAGE_INFO,
-                        ImageInfoWrapper.getImages(pos).getTitle(),
-                        ImageInfoWrapper.getImages(pos).getDate()))
+                        ImageInfoWrapper.getImage(pos).getTitle(),
+                        ImageInfoWrapper.getImage(pos).getDate()))
                 .setPositiveButton("Yes", (click, arg) -> {
                     final Fragment imageFrag = getSupportFragmentManager().findFragmentById(R.id.imageTitle);
                     if (imageFrag != null) {
                         getSupportFragmentManager().beginTransaction().remove(imageFrag).commit();
                     }
                     dao.deleteEntry(id);
-                    ImageInfoWrapper.deleteImages(pos);
+                    ImageInfoWrapper.deleteImage(pos);
                     imageAdapter.notifyDataSetChanged();
                     Toast.makeText(this, R.string.deleteToast, Toast.LENGTH_LONG)
                     .show();
@@ -169,7 +196,7 @@ public class ViewAllImage extends MainToolBar {
         }
 
         public ImageEntry getItem(int position) {
-            return ImageInfoWrapper.getImages(position);
+            return ImageInfoWrapper.getImage(position);
         }
 
         public long getItemId(int position) {
@@ -188,7 +215,7 @@ public class ViewAllImage extends MainToolBar {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final LayoutInflater inflater = getLayoutInflater();
-            final ImageEntry imageFile = ImageInfoWrapper.getImages(position);
+            final ImageEntry imageFile = ImageInfoWrapper.getImage(position);
             final View view = inflater.inflate(R.layout.image_list, parent, false);
 
             Bitmap image = null;

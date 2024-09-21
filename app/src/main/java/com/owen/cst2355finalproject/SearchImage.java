@@ -44,6 +44,10 @@ import java.util.concurrent.Executors;
 public class SearchImage extends MainToolBar {
     private static final ExecutorService FETCH_IMAGE_THREAD_POOL = Executors.newSingleThreadExecutor();
     private static final Object executorServiceLock = new Object();
+    private static final Calendar EARLIEST_DATE = Calendar.getInstance();
+    static {
+        EARLIEST_DATE.set(1995, Calendar.JUNE, 20);
+    }
     private DatePickerDialog datePicker;
     private ApplicationDAO dao;
     private ImageEntry newImage;
@@ -76,9 +80,7 @@ public class SearchImage extends MainToolBar {
 
         datePicker = getDatePickerDialog(new DatePickerListener());
         datePicker.setTitle(getString(R.string.pickerTitle));
-        searchDate.setOnClickListener((click) -> {
-            datePicker.show();
-        });
+        searchDate.setOnClickListener((click) -> datePicker.show());
 
         saveImage.setOnClickListener((click) -> {
             final TextView imageTitle = findViewById(R.id.searchImageName);
@@ -111,25 +113,15 @@ public class SearchImage extends MainToolBar {
     protected void alertDate(BadDateReason reason) {
         String alertString = null;
         switch (reason) {
-            case PAST:
-                alertString = getString(R.string.dateRangePast);
-                break;
-            case FUTURE:
-                alertString = getString(R.string.dateRangeFuture);
-                break;
             case VIDEO:
                 alertString = getString(R.string.dateRangeVideo);
-                break;
-            default:
                 break;
         }
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         progressVis(findViewById(R.id.progressId), false);
         alertDialogBuilder.setTitle(getString(R.string.dateOutRange))
                 .setMessage(alertString)
-                .setPositiveButton(getString(R.string.yes), (click, arg) -> {
-                    datePicker.show();
-                })
+                .setPositiveButton(getString(R.string.yes), (click, arg) -> datePicker.show())
                 .setNegativeButton(getString(R.string.no), (click, arg) -> {
                 })
                 .create()
@@ -148,7 +140,7 @@ public class SearchImage extends MainToolBar {
 
     private void addToDB() {
         dao.createEntry(newImage);
-        ImageInfoWrapper.setImages(newImage);
+        ImageInfoWrapper.addImage(newImage);
         Toast.makeText(this, getString(R.string.saveToast), Toast.LENGTH_LONG).show();
     }
 
@@ -159,8 +151,11 @@ public class SearchImage extends MainToolBar {
      */
     private DatePickerDialog getDatePickerDialog(DatePickerDialog.OnDateSetListener listen) {
         final Calendar cal = Calendar.getInstance();
-        return new DatePickerDialog(this, listen, cal.get(Calendar.YEAR),
+        final DatePickerDialog datePicker = new DatePickerDialog(this, listen, cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+        datePicker.getDatePicker().setMinDate(EARLIEST_DATE.getTimeInMillis());
+        datePicker.getDatePicker().setMaxDate(cal.getTimeInMillis());
+        return datePicker;
     }
 
     private void getNewImageEntry(String newDate) {
@@ -211,20 +206,11 @@ public class SearchImage extends MainToolBar {
          */
         @Override
         public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-
             final Calendar cal = Calendar.getInstance();
             cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-            final Calendar earliest = Calendar.getInstance();
-            earliest.set(1995, Calendar.JUNE, 20);
-            if (cal.after(Calendar.getInstance())) {
-                alertDate(BadDateReason.FUTURE);
-            } else if (cal.before(earliest)) {
-                alertDate(BadDateReason.PAST);
-            } else {
-                final DateFormat imageDate = new SimpleDateFormat(Constants.DATE_FORMAT_PATTERN);
-                final String newDate = imageDate.format(cal.getTime());
-                getNewImageEntry(newDate);
-            }
+            final DateFormat imageDate = new SimpleDateFormat(Constants.DATE_FORMAT_PATTERN);
+            final String newDate = imageDate.format(cal.getTime());
+            getNewImageEntry(newDate);
         }
     }
 

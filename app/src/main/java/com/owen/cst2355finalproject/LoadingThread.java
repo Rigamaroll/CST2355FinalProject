@@ -39,7 +39,7 @@ public class LoadingThread extends Thread {
             while (results.moveToNext()) {
                 final byte[] imageEntryObject = results.getBlob(imageObject);
                 final ImageEntry newImageEntry = convertFromBlob(imageEntryObject);
-                ImageInfoWrapper.setImages(newImageEntry);
+                ImageInfoWrapper.addImage(newImageEntry);
             }
         } finally {
             database.close();

@@ -1,4 +1,4 @@
-package com.owen.cst2355finalproject;
+package com.owen.cst2355finalproject.enums;
 
 import android.os.Build;
 
@@ -36,7 +36,6 @@ public enum ViewAllSortField {
         return SORT_FIELD_MAP.get(sortName);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public static List<String> getSortFieldKeys() {
         final List<String> sortFieldKeys = new ArrayList<String>(SORT_FIELD_MAP.keySet());
         sortFieldKeys.sort(Comparator.naturalOrder());

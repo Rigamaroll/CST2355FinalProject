@@ -36,7 +36,7 @@ public class Dashboard extends MainToolBar {
         getToolbar().setTitle(R.string.dashBoardTitle);
 
         final TextView totalPhotos = findViewById(R.id.totalPhotos);
-        totalPhotos.append(String.valueOf(ImageInfoWrapper.listSize()));
+        totalPhotos.append(String.valueOf(ImageInfoWrapper.getTotalImageCount()));
         final TextView lastLog = findViewById(R.id.lastLogin);
         lastLog.append(lastLogin == null ? "" : lastLogin);
 
