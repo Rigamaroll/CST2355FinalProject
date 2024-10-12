@@ -1,8 +1,5 @@
 package com.owen.cst2355finalproject;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,17 +15,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
 import com.owen.cst2355finalproject.entities.ImageEntryEntity;
 import com.owen.cst2355finalproject.enums.MediaType;
 import com.owen.cst2355finalproject.pojos.ImageEntry;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -249,22 +248,11 @@ public class SearchImage extends MainToolBar {
         @Override
         public void run() {
             try {
-                final JSONObject jObject = getImageInfo(this.url);
-                final MediaType mediaType = MediaType.valueOf(jObject.getString(Constants.MEDIA_TYPE_STRING));
-
-                if (mediaType != MediaType.image) {
+                newImage = getImageInfo(this.url);
+                if (newImage.getMediaType() != MediaType.image) {
                     runOnUiThread(()-> alertDate(BadDateReason.VIDEO));
                 } else {
-                    final String explanation = jObject.getString(Constants.EXPLANATION_STRING);
-                    final String date = jObject.getString(Constants.DATE_STRING);
-                    final String title = jObject.getString(Constants.TITLE_STRING);
-                    final String url = jObject.getString(Constants.URL_STRING);
-                    final String hdUrl = jObject.getString(Constants.HD_URL_STRING);
-                    final String copyright = jObject.optString(Constants.COL_COPYRIGHT, null);
-                    final Bitmap image = getImageData(url);
-                    newImage = new ImageEntry(title, url, date, hdUrl, explanation, mediaType);
-                    newImage.setImageFile(image);
-                    newImage.setCopyright(copyright);
+                    newImage.setImageFile(getImageData(newImage.getUrl()));
                     runOnUiThread(()->{
                         try {
                             setScreen(newImage);
@@ -314,26 +302,20 @@ public class SearchImage extends MainToolBar {
          * @throws JSONException
          */
 
-        private JSONObject getImageInfo(String imageURL) throws IOException, JSONException {
+        private ImageEntry getImageInfo(String imageURL) throws IOException, JSONException {
             final HttpURLConnection urlConnection = getConnection(imageURL);
-            JSONObject jObject = null;
             if (urlConnection.getResponseCode() == 200) {
+                final Gson gson = new Gson();
                 final InputStream inputStream = new URL(imageURL).openStream();
                 try(final BufferedReader reader =
                             new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8)) {
-                    final StringBuilder sb = new StringBuilder();
-                    String line = null;
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                    final String result = sb.toString();
-                    jObject = new JSONObject(result);
+                    return gson.fromJson(reader, ImageEntry.class);
                 } finally {
                     inputStream.close();
                     urlConnection.disconnect();
                 }
             }
-            return jObject;
+            return new ImageEntry();
         }
     }
 }

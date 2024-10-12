@@ -3,6 +3,11 @@ package com.owen.cst2355finalproject;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
+import com.owen.cst2355finalproject.enums.MediaType;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,50 +25,95 @@ import java.io.Serializable;
  */
 public class ImageEntry implements Serializable {
 
-    private final long id;
-    private final String title;
-    private final String url;
-    private final String date;
-    private final String hdURL;
-    private final String explanation;
+    private long id;
+    private String title;
+    private String url;
+    private String date;
+    @SerializedName("hdurl")
+    private String hdURL;
+    private String explanation;
+    @SerializedName("media_type")
+    private MediaType mediaType;
+    private String copyright;
     private byte[] imageFile = null;
 
-    public ImageEntry(long id, String title, String url, String date, String hdURL, String explanation, Bitmap imageFile) {
+    public ImageEntry(){}
+    public ImageEntry(long id, String title, String url, String date, String hdURL, String explanation, MediaType mediaType) {
         this.id = id;
         this.url = url;
         this.date = date;
         this.hdURL = hdURL;
         this.explanation = explanation;
         this.title = title;
-        try {
-            setImageFile(imageFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String getTitle() {
-        return title;
+        this.mediaType = mediaType;
     }
 
     public long getId() {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getUrl() {
         return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getDate() {
         return date;
     }
 
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     public String getHdURL() {
         return hdURL;
     }
 
+    public void setHdURL(String hdURL) {
+        this.hdURL = hdURL;
+    }
+
     public String getExplanation() {
         return explanation;
+    }
+
+    public void setExplanation(String explanation) {
+        this.explanation = explanation;
+    }
+
+    public void setImageFile(byte[] imageFile) {
+        this.imageFile = imageFile;
+    }
+
+    public MediaType getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(MediaType mediaType) {
+        this.mediaType = mediaType;
+    }
+
+    public String getCopyright() {
+        return copyright;
+    }
+
+    public void setCopyright(String copyright) {
+        this.copyright = copyright;
     }
 
     /**
