@@ -51,8 +51,6 @@
     <string name="pickerTitle">Choose The Image Date</string>
     <string name="searchImageResult">Your Image Result</string>
     <string name="dateOutRange">Please pick a new date.</string>
-    <string name="dateRangeFuture">Your Date is in The Future</string>
-    <string name="dateRangePast">Your Date is Too Old</string>
     <string name="dateRangeVideo">Your Date is a Video</string>
     <string name="saveToast">Image saved</string>
     <string name="helpSearchImage">Welcome to the search page.  This page allows you to search for a new daily image.

@@ -33,6 +33,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,10 +45,10 @@ import java.util.concurrent.Executors;
 public class SearchImage extends MainToolBar {
     private static final ExecutorService FETCH_IMAGE_THREAD_POOL = Executors.newSingleThreadExecutor();
     private static final Object executorServiceLock = new Object();
-    private static final Calendar EARLIEST_DATE = Calendar.getInstance();
-    static {
-        EARLIEST_DATE.set(1995, Calendar.JUNE, 20);
-    }
+    private static final Date EARLIEST_DATE = new Date(new Calendar
+            .Builder()
+            .setDate(1995, Calendar.JUNE, 20)
+            .build().getTimeInMillis());
     private DatePickerDialog datePicker;
     private ApplicationDAO dao;
     private ImageEntry newImage;
@@ -153,7 +154,7 @@ public class SearchImage extends MainToolBar {
         final Calendar cal = Calendar.getInstance();
         final DatePickerDialog datePicker = new DatePickerDialog(this, listen, cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-        datePicker.getDatePicker().setMinDate(EARLIEST_DATE.getTimeInMillis());
+        datePicker.getDatePicker().setMinDate(EARLIEST_DATE.getTime());
         datePicker.getDatePicker().setMaxDate(cal.getTimeInMillis());
         return datePicker;
     }
@@ -206,10 +207,14 @@ public class SearchImage extends MainToolBar {
          */
         @Override
         public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-            final Calendar cal = Calendar.getInstance();
-            cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+            final Date pickedDate = new Date(
+                    new Calendar
+                            .Builder()
+                            .setDate(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth())
+                            .build()
+                            .getTimeInMillis());
             final DateFormat imageDate = new SimpleDateFormat(Constants.DATE_FORMAT_PATTERN);
-            final String newDate = imageDate.format(cal.getTime());
+            final String newDate = imageDate.format(pickedDate.getTime());
             getNewImageEntry(newDate);
         }
     }
@@ -229,7 +234,7 @@ public class SearchImage extends MainToolBar {
                 final JSONObject jObject = getImageInfo(this.url);
                 final String mediaType = jObject.getString(Constants.MEDIA_TYPE_STRING);
 
-                if (mediaType == null || !mediaType.contentEquals(Constants.IMAGE_STRING)) {
+                if (!mediaType.contentEquals(Constants.IMAGE_STRING)) {
                     runOnUiThread(()-> alertDate(BadDateReason.VIDEO));
                 } else {
                     final String explanation = jObject.getString(Constants.EXPLANATION_STRING);
@@ -238,10 +243,9 @@ public class SearchImage extends MainToolBar {
                     final String url = jObject.getString(Constants.URL_STRING);
                     final String hdUrl = jObject.getString(Constants.HD_URL_STRING);
                     final Bitmap image = getImageData(url);
-
+                    newImage = new ImageEntry(dao.getNextKeyNumber(), title, url, date, hdUrl, explanation, image);
                     runOnUiThread(()->{
                         try {
-                            newImage = new ImageEntry(dao.getNextKeyNumber(), title, url, date, hdUrl, explanation, image);
                             setScreen(newImage);
                         } catch (IOException e) {
                             e.printStackTrace();

@@ -5,7 +5,6 @@
     <string name="title">Bienvenue au Viseur l\'Image de NASA\n</string>
     <string name="viewAllImageTitle">Images Enregistrées\n</string>
     <string name="searchImageTitle">Rechercher une Nouvelle Image</string>
-    <string name="version">Version 1.0</string>
     <string name="dashBoardTitle">Tableau de Bord</string>
 
     <!--Login Page -->
@@ -50,8 +49,6 @@
     <string name="pickerTitle">Choisissez la Date de l\'Image</string>
     <string name="searchImageResult">Votre Résultat d\'Image</string>
     <string name="dateOutRange">Veuillez choisir une nouvelle date.</string>
-    <string name="dateRangeFuture">Votre Date est Dans le Futur</string>
-    <string name="dateRangePast">Votre Date est Trop Vieux</string>
     <string name="dateRangeVideo">Votre Date est Une Vidéo</string>
     <string name="saveToast">Image enregistrée</string>
     <string name="helpSearchImage">Bienvenue sur la page de recherche. Cette page vous permet de rechercher une nouvelle image quotidienne.
