@@ -1,0 +1,2 @@
+CREATE TABLE Image (_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ImageEntry BLOB);
