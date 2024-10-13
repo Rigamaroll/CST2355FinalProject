@@ -19,6 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.owen.cst2355finalproject.entities.ImageEntryEntity;
+import com.owen.cst2355finalproject.enums.MediaType;
+import com.owen.cst2355finalproject.pojos.ImageEntry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -140,9 +143,24 @@ public class SearchImage extends MainToolBar {
      */
 
     private void addToDB() {
-        dao.createEntry(newImage);
+        final ImageEntryEntity entity = createImageEntryEntity();
+        final long id = dao.createEntry(entity);
+        newImage.setId(id);
         ImageInfoWrapper.addImage(newImage);
         Toast.makeText(this, getString(R.string.saveToast), Toast.LENGTH_LONG).show();
+    }
+
+    private ImageEntryEntity createImageEntryEntity() {
+        final ImageEntryEntity entity = new ImageEntryEntity();
+        entity.setCopyright(newImage.getCopyright());
+        entity.setExplanation(newImage.getExplanation());
+        entity.setUrl(newImage.getUrl());
+        entity.setHdURL(newImage.getHdURL());
+        entity.setMediaType(newImage.getMediaType());
+        entity.setDate(newImage.getDate());
+        entity.setTitle(newImage.getTitle());
+        entity.setImageFile(newImage.getImageFile());
+        return entity;
     }
 
     /**
@@ -186,7 +204,7 @@ public class SearchImage extends MainToolBar {
         imageUrl.setText(entry.getUrl());
         imageHDUrl.setText(entry.getHdURL());
         imageExplanation.setText(entry.getExplanation());
-        newImage.setImageBitmap(entry.getImageFile());
+        newImage.setImageBitmap(entry.getImageFileAsBitMap());
 
         final Button save = findViewById(R.id.saveImageButton);
         save.setVisibility(View.VISIBLE);
@@ -232,9 +250,9 @@ public class SearchImage extends MainToolBar {
         public void run() {
             try {
                 final JSONObject jObject = getImageInfo(this.url);
-                final String mediaType = jObject.getString(Constants.MEDIA_TYPE_STRING);
+                final MediaType mediaType = MediaType.valueOf(jObject.getString(Constants.MEDIA_TYPE_STRING));
 
-                if (!mediaType.contentEquals(Constants.IMAGE_STRING)) {
+                if (mediaType != MediaType.image) {
                     runOnUiThread(()-> alertDate(BadDateReason.VIDEO));
                 } else {
                     final String explanation = jObject.getString(Constants.EXPLANATION_STRING);
@@ -242,8 +260,11 @@ public class SearchImage extends MainToolBar {
                     final String title = jObject.getString(Constants.TITLE_STRING);
                     final String url = jObject.getString(Constants.URL_STRING);
                     final String hdUrl = jObject.getString(Constants.HD_URL_STRING);
+                    final String copyright = jObject.optString(Constants.COL_COPYRIGHT, null);
                     final Bitmap image = getImageData(url);
-                    newImage = new ImageEntry(dao.getNextKeyNumber(), title, url, date, hdUrl, explanation, image);
+                    newImage = new ImageEntry(title, url, date, hdUrl, explanation, mediaType);
+                    newImage.setImageFile(image);
+                    newImage.setCopyright(copyright);
                     runOnUiThread(()->{
                         try {
                             setScreen(newImage);

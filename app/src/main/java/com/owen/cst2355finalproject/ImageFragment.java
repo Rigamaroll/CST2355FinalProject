@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.owen.cst2355finalproject.pojos.ImageEntry;
+
 import java.io.IOException;
 
 /**
@@ -54,7 +56,7 @@ public class ImageFragment extends Fragment {
         fragmentHdURL.append(bundleImage.getHdURL());
 
         try {
-            fragmentImage.setImageBitmap(bundleImage.getImageFile());
+            fragmentImage.setImageBitmap(bundleImage.getImageFileAsBitMap());
         } catch (IOException e) {
             e.printStackTrace();
         }

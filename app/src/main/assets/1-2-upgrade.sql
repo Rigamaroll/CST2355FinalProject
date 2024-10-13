@@ -1,5 +1,5 @@
  Create Table ImageEntry (
-    _id INTEGER PRIMARY KEY,
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     date TEXT NOT NULL,
     explanation TEXT NOT NULL,

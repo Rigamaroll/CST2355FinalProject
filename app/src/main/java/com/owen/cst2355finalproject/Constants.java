@@ -31,7 +31,18 @@ public class Constants {
     public static final String HD_URL_STRING = "hdurl";
 
     // database constants
-    public static final String COL_ID = "_id";
+    @Deprecated
+    public static final String TABLE_NAME_IMAGE = "Image";
+    @Deprecated
     public static final String COL_IMAGE_ENTRY_OBJECT = "ImageEntry";
-    public static final String TABLE_NAME = "Image";
+    public static final String TABLE_NAME_IMAGE_ENTRY = "ImageEntry";
+    public static final String COL_ID = "_id";
+    public static final String COL_TITLE = "title";
+    public static final String COL_DATE = "date";
+    public static final String COL_EXPLANATION = "explanation";
+    public static final String COL_MEDIA_TYPE = "mediaType";
+    public static final String COL_URL = "url";
+    public static final String COL_HD_URL = "hdUrl";
+    public static final String COL_COPYRIGHT = "copyright";
+    public static final String COL_IMAGE_FILE = "imageFile";
 }

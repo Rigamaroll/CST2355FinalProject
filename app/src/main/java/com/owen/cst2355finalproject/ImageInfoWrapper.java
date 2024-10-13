@@ -4,6 +4,7 @@ import com.owen.cst2355finalproject.enums.BooleanKeyword;
 import com.owen.cst2355finalproject.enums.SortDirection;
 import com.owen.cst2355finalproject.enums.ViewAllFilterField;
 import com.owen.cst2355finalproject.enums.ViewAllSortField;
+import com.owen.cst2355finalproject.pojos.ImageEntry;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -54,6 +55,7 @@ public class ImageInfoWrapper {
         return images.size();
     }
     public static int getTotalImageCount(){return (images.size() + FILTERED_OUT_IMAGES.size());}
+    public static List<ImageEntry> getImages() { return images; }
 
     public static void sortList(final ViewAllSortField field, final SortDirection direction) {
         if (images.isEmpty()) {

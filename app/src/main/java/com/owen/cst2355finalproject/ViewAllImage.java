@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.owen.cst2355finalproject.enums.SortDirection;
 import com.owen.cst2355finalproject.enums.ViewAllFilterField;
 import com.owen.cst2355finalproject.enums.ViewAllSortField;
+import com.owen.cst2355finalproject.pojos.ImageEntry;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -237,7 +238,7 @@ public class ViewAllImage extends MainToolBar {
 
             Bitmap image = null;
             try {
-                image = imageFile.getImageFile();
+                image = imageFile.getImageFileAsBitMap();
             } catch (IOException e) {
                 e.printStackTrace();
             }

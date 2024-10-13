@@ -18,9 +18,7 @@ import java.util.stream.Collectors;
 public class ImageDbOpener extends SQLiteOpenHelper {
 
     protected final static String DATABASE_NAME = "ImageDB";
-    protected final static int VERSION_NUM = 1;
-
-    private final static String UPGRADE_SCRIPT_NAME = "%d-%d-upgrade.sql";
+    protected final static int VERSION_NUM = 2;
 
     private Context context;
 
@@ -60,7 +58,7 @@ public class ImageDbOpener extends SQLiteOpenHelper {
     }
 
     private void runCreateScript(final SQLiteDatabase imageDB) throws IOException {
-       final String sql = generateSql("create.sql");
+       final String sql = generateSqlFromFile("create.sql");
        imageDB.execSQL(sql);
     }
 
@@ -69,13 +67,13 @@ public class ImageDbOpener extends SQLiteOpenHelper {
             final int oldVersion,
             final int newVersion) throws IOException {
         for (int i = oldVersion; i < newVersion; i++) {
-            final String fileName = String.format(UPGRADE_SCRIPT_NAME, i,i+1);
-            final String sql = generateSql(fileName);
+            final String fileName = String.format("%d-%d-upgrade.sql", i,i+1);
+            final String sql = generateSqlFromFile(fileName);
             imageDB.execSQL(sql);
         }
     }
 
-    private String generateSql(final String fileName) throws IOException {
+    private String generateSqlFromFile(final String fileName) throws IOException {
         try (final BufferedReader reader =
                      new BufferedReader(
                              new InputStreamReader(
@@ -84,5 +82,9 @@ public class ImageDbOpener extends SQLiteOpenHelper {
                     .lines()
                     .collect(Collectors.joining());
         }
+    }
+
+    public static int getVersionNum() {
+        return VERSION_NUM;
     }
 }
