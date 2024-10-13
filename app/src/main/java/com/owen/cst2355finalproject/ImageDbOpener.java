@@ -68,9 +68,11 @@ public class ImageDbOpener extends SQLiteOpenHelper {
             final SQLiteDatabase imageDB,
             final int oldVersion,
             final int newVersion) throws IOException {
-        final String fileName = String.format(UPGRADE_SCRIPT_NAME, oldVersion,newVersion);
-        final String sql = generateSql(fileName);
-        imageDB.execSQL(sql);
+        for (int i = oldVersion; i < newVersion; i++) {
+            final String fileName = String.format(UPGRADE_SCRIPT_NAME, i,i+1);
+            final String sql = generateSql(fileName);
+            imageDB.execSQL(sql);
+        }
     }
 
     private String generateSql(final String fileName) throws IOException {
