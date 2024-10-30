@@ -83,8 +83,4 @@ public class ImageDbOpener extends SQLiteOpenHelper {
                     .collect(Collectors.joining());
         }
     }
-
-    public static int getVersionNum() {
-        return VERSION_NUM;
-    }
 }
