@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.owen.cst2355finalproject.pojos.ImageEntry;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 
 /**
@@ -45,6 +47,7 @@ public class ImageFragment extends Fragment {
         final TextView fragmentExplanation = view.findViewById(R.id.fragmentExplanation);
         final TextView fragmentURL = view.findViewById(R.id.fragmentURL);
         final TextView fragmentHdURL = view.findViewById(R.id.fragmentHdURL);
+        final TextView fragmentCopyright = view.findViewById(R.id.fragmentCopyright);
         final ImageView fragmentImage = view.findViewById((R.id.imageForFragment));
 
         final ImageEntry bundleImage = (ImageEntry) activityData.getSerializable("imageEntry");
@@ -54,6 +57,9 @@ public class ImageFragment extends Fragment {
         fragmentExplanation.append(bundleImage.getExplanation());
         fragmentURL.append(bundleImage.getUrl());
         fragmentHdURL.append(bundleImage.getHdURL());
+        final String copyright = bundleImage.getCopyright() != null
+                ? StringUtils.trim(bundleImage.getCopyright()) : getString(R.string.notAvailable);
+        fragmentCopyright.append(copyright);
 
         try {
             fragmentImage.setImageBitmap(bundleImage.getImageFileAsBitMap());

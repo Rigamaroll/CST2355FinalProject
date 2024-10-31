@@ -59,6 +59,13 @@
                 android:text="@string/imageHdURL"
                 android:textColor="@color/white"
                 android:textSize="20dp" />
+            <TextView
+                android:id="@+id/fragmentCopyright"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/imageCopyright"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
 
         </LinearLayout>
 </ScrollView>

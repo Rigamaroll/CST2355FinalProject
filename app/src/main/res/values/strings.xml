@@ -78,11 +78,13 @@
 
     <!--Image Fragment -->
 
-    <string name="imageDate">\nDate:</string>
+    <string name="imageDate">\nDate:\n</string>
     <string name="imageTitle"></string>
     <string name="imageExplanation">\nExplanation:\n</string>
-    <string name="imageURL">\nURL:</string>
-    <string name="imageHdURL">\nHD URL:</string>
+    <string name="imageURL">\nURL:\n</string>
+    <string name="imageHdURL">\nHD URL:\n</string>
+    <string name="imageCopyright">\nCopyright:\n</string>
+    <string name="notAvailable">Not Available</string>
     <string name="hideButton">HIDE</string>
 
     <!-- Navigation -->
