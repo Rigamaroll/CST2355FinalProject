@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class ImageDbOpener extends SQLiteOpenHelper {
 
     protected final static String DATABASE_NAME = "ImageDB";
-    protected final static int VERSION_NUM = 2;
+    protected final static int VERSION_NUM = 3;
 
     private Context context;
 

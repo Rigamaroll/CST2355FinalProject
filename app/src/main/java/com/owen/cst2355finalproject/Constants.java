@@ -22,19 +22,8 @@ public class Constants {
     public static final String API_KEY = "apiKey";
     public static final String KEY = "key";
     public static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
-    public static final String MEDIA_TYPE_STRING = "media_type";
-    public static final String IMAGE_STRING = "image";
-    public static final String EXPLANATION_STRING = "explanation";
-    public static final String DATE_STRING = "date";
-    public static final String TITLE_STRING = "title";
-    public static final String URL_STRING = "url";
-    public static final String HD_URL_STRING = "hdurl";
 
     // database constants
-    @Deprecated
-    public static final String TABLE_NAME_IMAGE = "Image";
-    @Deprecated
-    public static final String COL_IMAGE_ENTRY_OBJECT = "ImageEntry";
     public static final String TABLE_NAME_IMAGE_ENTRY = "ImageEntry";
     public static final String COL_ID = "_id";
     public static final String COL_TITLE = "title";
