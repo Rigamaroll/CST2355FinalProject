@@ -11,6 +11,7 @@ public class ImageEntryEntity {
     private MediaType mediaType;
     private String url;
     private String hdURL;
+    private String thumbnailUrl;
     private String copyright;
     private byte[] imageFile;
 
@@ -52,6 +53,14 @@ public class ImageEntryEntity {
 
     public void setHdURL(String hdURL) {
         this.hdURL = hdURL;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public String getExplanation() {

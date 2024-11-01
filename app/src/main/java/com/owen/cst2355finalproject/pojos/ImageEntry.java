@@ -3,8 +3,6 @@ package com.owen.cst2355finalproject.pojos;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.owen.cst2355finalproject.enums.MediaType;
 
@@ -23,7 +21,7 @@ import java.io.Serializable;
  * could be serialized into the database.  The bitmap isn't a serializable
  * object.
  */
-public class ImageEntry implements Serializable {
+public class ImageEntry implements Serializable{
 
     private long id;
     private String title;
@@ -31,6 +29,8 @@ public class ImageEntry implements Serializable {
     private String date;
     @SerializedName("hdurl")
     private String hdURL;
+    @SerializedName("thumbnail_url")
+    private String thumbnailUrl;
     private String explanation;
     @SerializedName("media_type")
     private MediaType mediaType;
@@ -38,14 +38,6 @@ public class ImageEntry implements Serializable {
     private byte[] imageFile = null;
 
     public ImageEntry(){}
-    public ImageEntry(String title, String url, String date, String hdURL, String explanation, MediaType mediaType) {
-        this.url = url;
-        this.date = date;
-        this.hdURL = hdURL;
-        this.explanation = explanation;
-        this.title = title;
-        this.mediaType = mediaType;
-    }
 
     public long getId() {
         return id;
@@ -85,6 +77,14 @@ public class ImageEntry implements Serializable {
 
     public void setHdURL(String hdURL) {
         this.hdURL = hdURL;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public String getExplanation() {
@@ -151,5 +151,20 @@ public class ImageEntry implements Serializable {
         } catch (IOException e) {
             throw e;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ImageEntry{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", url='" + url + '\'' +
+                ", date='" + date + '\'' +
+                ", hdURL='" + hdURL + '\'' +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", explanation='" + explanation + '\'' +
+                ", mediaType=" + mediaType +
+                ", copyright='" + copyright + '\''+
+                '}';
     }
 }

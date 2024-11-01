@@ -1,5 +1,6 @@
 package com.owen.cst2355finalproject;
 
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -29,6 +30,7 @@ public class LoadingThread extends Thread {
      * to convert the Blob back into an ImageEntry object, and the ImageEntry object is put
      * into the CopyOnWriteArrayList.  This is done for each row in the Cursor.
      */
+    @SuppressLint("Range")
     private void loadFromDB() {
         try (//query all the results from the database:
                 final Cursor results = database.rawQuery(getLoadSql(), null)){
@@ -40,9 +42,9 @@ public class LoadingThread extends Thread {
                 entryPojo.setTitle(results.getString(results.getColumnIndex(Constants.COL_TITLE)));
                 entryPojo.setDate(results.getString(results.getColumnIndex(Constants.COL_DATE)));
                 entryPojo.setExplanation(results.getString(results.getColumnIndex(Constants.COL_EXPLANATION)));
+                entryPojo.setMediaType(MediaType.valueOf(results.getString(results.getColumnIndex(Constants.COL_MEDIA_TYPE))));
                 entryPojo.setHdURL(results.getString(results.getColumnIndex(Constants.COL_HD_URL)));
                 entryPojo.setUrl(results.getString(results.getColumnIndex(Constants.COL_URL)));
-                entryPojo.setMediaType(MediaType.valueOf(results.getString(results.getColumnIndex(Constants.COL_MEDIA_TYPE))));
                 entryPojo.setId(results.getLong(results.getColumnIndex(Constants.COL_ID)));
                 entryPojo.setCopyright(results.getString(results.getColumnIndex(Constants.COL_COPYRIGHT)));
                 ImageInfoWrapper.addImage(entryPojo);

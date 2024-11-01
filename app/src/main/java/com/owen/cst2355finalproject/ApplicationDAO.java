@@ -34,6 +34,7 @@ public class ApplicationDAO {
             newRow.put(Constants.COL_HD_URL, imageEntry.getHdURL());
             newRow.put(Constants.COL_COPYRIGHT, imageEntry.getCopyright());
             newRow.put(Constants.COL_IMAGE_FILE, imageEntry.getImageFile());
+            newRow.put(Constants.COL_THUMBNAIL_URL, imageEntry.getThumbnailUrl());
             return database.insert(Constants.TABLE_NAME_IMAGE_ENTRY, null, newRow);
         } catch (Exception e) {
             e.printStackTrace();

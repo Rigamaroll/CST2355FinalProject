@@ -6,5 +6,6 @@
     mediaType TEXT NOT NULL,
     url TEXT,
     hdUrl TEXT,
+    thumbnailUrl TEXT,
     copyright TEXT,
     imageFile BLOB);

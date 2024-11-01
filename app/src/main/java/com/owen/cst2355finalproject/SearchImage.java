@@ -16,14 +16,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.owen.cst2355finalproject.deserializers.MediaTypeDeserializer;
 import com.owen.cst2355finalproject.entities.ImageEntryEntity;
 import com.owen.cst2355finalproject.enums.MediaType;
 import com.owen.cst2355finalproject.pojos.ImageEntry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
@@ -54,6 +56,7 @@ public class SearchImage extends MainToolBar {
     private DatePickerDialog datePicker;
     private ApplicationDAO dao;
     private ImageEntry newImage;
+    private Gson gson;
 
     /**
      * creation method for the activity which sets the ImageInfoWrapper containing
@@ -69,22 +72,23 @@ public class SearchImage extends MainToolBar {
         setContentView(R.layout.activity_search_image);
         dao = new ApplicationDAO(this);
         initialize();
-        getToolbar().setTitle(getString(R.string.searchImageTitle));
+    }
 
+    @Override
+    public void initialize() {
+        super.initialize();
+        getToolbar().setTitle(getString(R.string.searchImageTitle));
         final Button searchDate = findViewById(R.id.searchImageButton);
         final Button saveImage = findViewById(R.id.saveImageButton);
-
         final TextView hdURL = findViewById(R.id.searchImageHdURL);
         hdURL.setOnClickListener((click) -> {
             final Uri imageLocation = Uri.parse(hdURL.getText().toString());
             final Intent goBrowser = new Intent(Intent.ACTION_VIEW, imageLocation);
             startActivity(goBrowser);
         });
-
         datePicker = getDatePickerDialog(new DatePickerListener());
         datePicker.setTitle(getString(R.string.pickerTitle));
         searchDate.setOnClickListener((click) -> datePicker.show());
-
         saveImage.setOnClickListener((click) -> {
             final TextView imageTitle = findViewById(R.id.searchImageName);
             if (ImageInfoWrapper.exists(newImage.getDate())) {
@@ -95,6 +99,10 @@ public class SearchImage extends MainToolBar {
                 addToDB();
             }
         });
+        final MediaTypeDeserializer deserializer = new MediaTypeDeserializer();
+        gson = new GsonBuilder()
+                .registerTypeAdapter(MediaType.class, deserializer)
+                .create();
     }
 
     public static void shutdownExecutorService() {
@@ -106,30 +114,6 @@ public class SearchImage extends MainToolBar {
 
     private void progressVis(ProgressBar progress, boolean isVisible) {
         progress.setVisibility(isVisible ? View.VISIBLE : View.INVISIBLE);
-    }
-
-    /**
-     * Creates an alert dialog if the date picked is not a valid date.
-     * @param reason reason for this dialog being created
-     */
-
-    protected void alertDate(BadDateReason reason) {
-        String alertString = null;
-        switch (reason) {
-            case VIDEO:
-                alertString = getString(R.string.dateRangeVideo);
-                break;
-        }
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        progressVis(findViewById(R.id.progressId), false);
-        alertDialogBuilder.setTitle(getString(R.string.dateOutRange))
-                .setMessage(alertString)
-                .setPositiveButton(getString(R.string.yes), (click, arg) -> datePicker.show())
-                .setNegativeButton(getString(R.string.no), (click, arg) -> {
-                })
-                .create()
-                .show();
-
     }
 
     /**
@@ -159,6 +143,7 @@ public class SearchImage extends MainToolBar {
         entity.setDate(newImage.getDate());
         entity.setTitle(newImage.getTitle());
         entity.setImageFile(newImage.getImageFile());
+        entity.setThumbnailUrl(newImage.getThumbnailUrl());
         return entity;
     }
 
@@ -196,14 +181,21 @@ public class SearchImage extends MainToolBar {
         final TextView imageUrl = findViewById(R.id.searchImageURL);
         final TextView imageHDUrl = findViewById(R.id.searchImageHdURL);
         final TextView imageExplanation = findViewById(R.id.searchImageExplanation);
+        final TextView imageCopyright = findViewById(R.id.searchImageCopyright);
         final ImageView newImage = findViewById(R.id.searchImageView);
 
         imageTitle.setText(entry.getTitle());
         imageDate.setText(entry.getDate());
         imageUrl.setText(entry.getUrl());
-        imageHDUrl.setText(entry.getHdURL());
+        if (StringUtils.isNotEmpty(entry.getHdURL())) {
+            imageHDUrl.setText(entry.getHdURL());
+        }
         imageExplanation.setText(entry.getExplanation());
         newImage.setImageBitmap(entry.getImageFileAsBitMap());
+
+        final String copyright = entry.getCopyright() != null
+                ? StringUtils.trim(entry.getCopyright()) : getString(R.string.notAvailable);
+        imageCopyright.setText(copyright);
 
         final Button save = findViewById(R.id.saveImageButton);
         save.setVisibility(View.VISIBLE);
@@ -249,18 +241,21 @@ public class SearchImage extends MainToolBar {
         public void run() {
             try {
                 newImage = getImageInfo(this.url);
-                if (newImage.getMediaType() != MediaType.image) {
-                    runOnUiThread(()-> alertDate(BadDateReason.VIDEO));
-                } else {
-                    newImage.setImageFile(getImageData(newImage.getUrl()));
-                    runOnUiThread(()->{
-                        try {
-                            setScreen(newImage);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
+                switch (newImage.getMediaType()) {
+                    case IMAGE:
+                        newImage.setImageFile(getImageData(newImage.getUrl()));
+                        break;
+                    case VIDEO:
+                        newImage.setImageFile(getImageData(newImage.getThumbnailUrl()));
+                        break;
                 }
+                runOnUiThread(()->{
+                    try {
+                        setScreen(newImage);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
@@ -305,7 +300,6 @@ public class SearchImage extends MainToolBar {
         private ImageEntry getImageInfo(String imageURL) throws IOException, JSONException {
             final HttpURLConnection urlConnection = getConnection(imageURL);
             if (urlConnection.getResponseCode() == 200) {
-                final Gson gson = new Gson();
                 final InputStream inputStream = new URL(imageURL).openStream();
                 try(final BufferedReader reader =
                             new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8)) {

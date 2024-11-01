@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.owen.cst2355finalproject.enums.MediaType;
 import com.owen.cst2355finalproject.pojos.ImageEntry;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,7 +57,11 @@ public class ImageFragment extends Fragment {
         fragmentDate.append(bundleImage.getDate());
         fragmentExplanation.append(bundleImage.getExplanation());
         fragmentURL.append(bundleImage.getUrl());
-        fragmentHdURL.append(bundleImage.getHdURL());
+        if (bundleImage.getMediaType() == MediaType.IMAGE) {
+            fragmentHdURL.append(bundleImage.getHdURL());
+        } else {
+            fragmentHdURL.setText("Video Link: \n" + bundleImage.getUrl());
+        }
         final String copyright = bundleImage.getCopyright() != null
                 ? StringUtils.trim(bundleImage.getCopyright()) : getString(R.string.notAvailable);
         fragmentCopyright.append(copyright);
@@ -67,7 +72,9 @@ public class ImageFragment extends Fragment {
             e.printStackTrace();
         }
         fragmentHdURL.setOnClickListener((click) -> {
-            dispatchGoBrowserHDURL(bundleImage.getHdURL());
+            final String url = bundleImage.getMediaType() == MediaType.IMAGE
+                    ? bundleImage.getHdURL() : bundleImage.getUrl();
+            dispatchGoBrowserHDURL(url);
         });
         return view;
     }
