@@ -25,7 +25,9 @@ public class ApplicationDAO {
 
     public long createEntry(final ImageEntryEntity imageEntry) {
         final ContentValues newRow = new ContentValues();
-        try (final SQLiteDatabase database = getImageDb(true)) {
+        final SQLiteDatabase database = getImageDb(true);
+        long newId = 0;
+        try {
             newRow.put(Constants.COL_TITLE, imageEntry.getTitle());
             newRow.put(Constants.COL_DATE, imageEntry.getDate());
             newRow.put(Constants.COL_EXPLANATION, imageEntry.getExplanation());
@@ -35,19 +37,34 @@ public class ApplicationDAO {
             newRow.put(Constants.COL_COPYRIGHT, imageEntry.getCopyright());
             newRow.put(Constants.COL_IMAGE_FILE, imageEntry.getImageFile());
             newRow.put(Constants.COL_THUMBNAIL_URL, imageEntry.getThumbnailUrl());
-            return database.insert(Constants.TABLE_NAME_IMAGE_ENTRY, null, newRow);
+            database.beginTransactionNonExclusive();
+            newId = database.insert(Constants.TABLE_NAME_IMAGE_ENTRY, null, newRow);
+            database.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
+        } finally {
+            database.endTransaction();
+            database.close();
         }
+        return newId;
     }
 
     public void deleteEntry(long id) {
-        try (final SQLiteDatabase database = getImageDb(true)) {
+        final SQLiteDatabase database = getImageDb(true);
+        try {
+            database.beginTransactionNonExclusive();
             database.delete(
                     Constants.TABLE_NAME_IMAGE_ENTRY,
                     Constants.COL_ID + " = ?",
                     new String[]{String.valueOf(id)});
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Exception while deleting Entry");
+        } finally {
+            database.endTransaction();
+            database.close();
         }
     }
 
